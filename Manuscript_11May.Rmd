@@ -49,9 +49,10 @@ output            : papaja::apa6_pdf
 ---
 
 ```{r message = FALSE, warning = FALSE}
-library("papaja")
+#The packages below will allow you to access "papaja", and if it fails, then try running all of the code at once. It should work then. 
 require(devtools)
 install_github("crsh/papaja")
+library("papaja")
 ```
 #Introduction
   Amazon’s Mechanical Turk (MTurk), an online labor market created by Amazon, has recently become popular among social scientists interested in collecting inexpensive, high-quality data from a diverse population (@aguinis2012conducting @behrend2011viability @bergman2016have @paolacci2014inside @shank2016using). Leveraging the strengths of this tool, MTurk has been used by social scientists to replicate well-known phenomena (e.g., reaction times, priming, task switching; @crump2013evaluating; memory, @simons2012common) and by organizational behavior (OB) researchers to expand the OB literature (e.g., @yarkoni2015interactions).
