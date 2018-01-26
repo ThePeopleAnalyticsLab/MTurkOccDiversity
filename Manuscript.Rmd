@@ -50,8 +50,6 @@ output            : papaja::apa6_pdf
 
 ```{r message = FALSE, warning = FALSE}
 #The packages below will allow you to access "papaja", and if it fails, then try running all of the code at once. It should work then. 
-require(devtools)
-install_github("crsh/papaja")
 library("papaja")
 ```
 #Introduction
@@ -83,11 +81,21 @@ library("papaja")
 library(readr)
 library(readxl)
 library(data.table)
+library(openxlsx)
 
 #Load datasets. Note: these datasets were not taken direclty from their respective sources (i.e., BLS or Qualtrics survey, respectively). The BLS dataset is a table describing the broader occupational categories, number of employees working in jobs that fall under one of these categories, and the relative frequency of jobs falling under said occupational category. The LATech dataset comes from a separate investigaiton using MTurk whereby individuals who were flagged for inattentive responding were removed from the dataset. The UGA dataset is a full dataset in the sense that it contains all individuals whose data are relevant for our investigation (i.e., participants hold a job that falls under a SOC classification) or not (i.e., they either do not work or work in a job falling outside the SOC classification system). 
+#Build the BLS Table, but first establish a temp file. 
 
-#Build the BLS Table.
-##BLS data
+# Download the file with download.file()
+# Here is the URL.
+download.file("https://www.bls.gov/oes/special.requests/oesm15nat.zip", "BLS2015.zip")
+unzip("BLS2015.zip")
+library(readxl)
+national_M2015_dl <- read_excel("oesm15nat/national_M2015_dl.xlsx")
+View(national_M2015_dl)
+
+#Edit the code below such that the newly downloaded data aligns with the code below. You'll need to include relative percentages. 
+
 BLS <- read_excel("~/Documents/Research/Research on MTurk/MTurk's Occupational Diversity/Datasets/BLS Data from 2015.xlsx")
 ###Rename rows and aggregate.
 BLS[1, 1] = "11-13 Management, Business, and Financial Occupations"
@@ -437,7 +445,6 @@ pwr.chisq.test(w=r2,N=(sum(tab2$n2)),df=12,sig.level = .01)
 ###When interpreting the differences, point out the magnitude of the disparity between expectations and observations. 
 
 ```
-
 
 ##MTurk Occupational Summary Statistics
   Participants’ data were collected from two independently conducted studies (n~1~ = `r nrow(LATech)`; n~2~ = `r nrow(UGA)`). In one study (n~1~ =`r nrow(LATech)`), occupational data was self-reported by participants who were asked to described their job title. They were then brought to ONET online and asked to retrieve the  six-digit occupational classification code that most closely corresponded to their job title. In the second study (n~2~ = `r nrow(UGA)`), participants again self-reported their job title. However, the six-digit occupational classification codes were obtained by training research assistants to match the self-reported job titles to those in the ONET database. Using this data, we described the occupational diversity of each sample using relative frequencies of occupational category representation as described by Table 1. 
