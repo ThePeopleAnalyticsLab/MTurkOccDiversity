@@ -487,7 +487,9 @@ my_citation <- cite_r(file = "/Users/ccasti02/Documents/Research/Research on MTu
 \setlength{\leftskip}{0.5in}
 
 
-###Replication Demographic Analaysis
+##Replication Demographic Analaysis
+##Age Analysis
+```{r}
 #Age Analysis T- Test
 #Load Dataset
 require(dplyr)
@@ -512,7 +514,10 @@ n <- as.numeric(667)
 #Run t test.
 t_value <- (samp_mean - pop_mean)/(samp_sd/sqrt(n))
 View(t_value)
+```
 
+##Gender Analysis
+```{r}
 ##Gender Analysis
 BLS_data <- read_excel("employment_demo.xlsx")
 
@@ -554,7 +559,12 @@ View(gender_ch2)
 
 #Sum chi-square values.
 sum(gender_ch2$chi2, na.rm=TRUE)
+```
 
+
+
+##Ethnicity Analysis
+```{r}
 #Ethnicity Analysis 
 #Define obs_eth
 BLS_cauc <- as.numeric(BLS_data[7, 4])/100
@@ -589,3 +599,4 @@ View(eth_ch2)
 
 #Sum chi-square values.
 sum(eth_ch2$chi2, na.rm=TRUE)
+```
