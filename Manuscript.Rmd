@@ -594,7 +594,7 @@ sum(BLS_eth)
 #Get MTurk ethnicity data
 MTurk_eth <- MTurk17 %>%
   count(MTurk17$With.which.ethnicity.do.you.most.identify.)
-
+MTurk_eth <- MTurk_eth[c(1:4), ]
 
 #Define confidence intervals 
 ethCI <- binom.confint(x = MTurk_eth$n, n = sum(MTurk_eth$n), conf.level = 0/95, methods = "exact")
