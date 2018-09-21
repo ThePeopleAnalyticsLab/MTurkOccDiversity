@@ -475,34 +475,6 @@ pwr.chisq.test(w=r2,N=(sum(tab2$n2)),df=12,sig.level = .01)
 #insert table 2 about here
 #- - - - - - - - - - - - - 
 
-#Discussion
-  What started our investigation was a simple research question: is the occupational diversity of the MTurk population representative of the broader US population? Our data suggest that the answer is not consistently so: certain occupations are over-represented, some fall within expectations, and still others are under-represented. Thus, OB researchers using convenient sampling procedures that draw on the MTurk population should consider whether occupational features might play a role in their investigation, which is point that we will elaborate upon in greater detail. Simply put, our results suggest that MTurk’s (US) occupational diversity does not align with the broader US economy. 
-
-#Recommendations for Researchers Using MTurk
-  Given that OB researchers will likely wish to continue using MTurk as a means of gathering diverse, convenient, and low-cost survey sample data, researchers should consider how differences in the occupational diversity observed amongst MTurk workers relative to the US population might impinge upon the generalizability of their findings (@newman2015external). Specifically, given the over-representation of workers from (1) Management, Business, and Financial, (2) Computer, Engineering, and Science, and (3) Education, Legal, Community Service, Arts, and Media occupations, we might safely assume that many of our findings from MTurk will generalize across jobs classified under these broader over-represented occupational categories. However, as many occupations were under-represented [e.g., (1) Service, (2) Construction and Extraction, (3) Installation, Maintenance, and Repair, (4) Production; and (5) Transportation and Material Moving], questions may arise as to whether findings will generalize to jobs falling under these broad classifications. 
-  To address this issue, researchers should consider capturing occupational data and modeling theoretically derived moderators. Person-environment (P-E) fit theories should help guide researchers in proposing how certain occupational groupings might influence individual-level relationships, lending to more nuanced and contextualized results (@how2009dr). Further, O*NET might be useful in this regard as it provides researchers a means for quantifying key occupational differences (e.g., level of competition requirements, social skills requirements) and thereby testing P-E fit hypotheses pertaining to occupational group differences (see @judge2015person). 
-
-##Limitations and Future Research
-  One key limitation is that we assumed that O*NET’s classification system perfectly captured all occupations during 2015. Additionally, as both studies involved convenient sampling procedures, it remains uncertain the extent to which these samples adequately reflect the larger MTurk population. Still, the consistency of our findings should be considered by future OB/HR researchers hoping to draw on MTurk for their research with the hopes of generalizing to the larger (or a specific) working US population. Additionally, as our studies were conducted in the US, it remains unclear how other MTurk populations might reflect (however imperfectly) their respective broader economy. Future larger scale studies should also consider lower levels of BLS occupational classification to examine the extent to which narrower occupations might not be represented by MTurk. Lastly, examining diversity in other respects (age, racio-ethnic, income, education, etc.) should also be considered. Though MTurk offers a practically feasible method of attaining high quality data, future research will be needed to understand the limitations of this tool.
-
-  Given that our data were gathered and analyzed in 2015, it might be insightful to have our procedures replicated annually to examine how the demographics of MTurk, specifically occupational characteristics, change over time, especially as access to technology becomes even easier and more commonplace. Thus, we encourage researchers to continue examining the occupational diversity of MTurk relative to the US economy. We also encourage researchers to consider novel ways of approximating the occupational diversity of both the US economy and MTurk because the currently existing taxonomies that we have used (i.e., BLS-based) probably do not capture all occupations. Lastly, our results raise a new and interesting research question: Why might MTurk possess the occupational diversity makeup that it does (i.e., why are some occupations over-represented while others are under-represented)? Similarly, what factors (e.g., access to technology, interest in psychology) might make it easier for workers coming from certain occupations to participate in OB studies hosted on MTurk? Answering these questions might unearth more constraints that impinge on the findings of OB studies using MTurk. 
-
-#Conclusion
-  We called into question the diversity of MTurk as a key strength and suggested one key area where diversity may be lacking: occupational diversity. Our results suggest that, compared to the broader US population, MTurk is not as diverse, both over- and underrepresenting certain occupations. Future research drawing on MTurk should consider how occupational differences might be theoretically relevant and incorporate these effects in analyses using MTurk sample data to help overcoming these shortcomings.
-  
-\newpage
-
-# References
-```{r}
-require(papaja)
-r_refs(file = "/Users/ccasti02/Documents/Research/Research on MTurk/MTurk's Occupational Diversity/r-references.bib")
-my_citation <- cite_r(file = "/Users/ccasti02/Documents/Research/Research on MTurk/MTurk's Occupational Diversity/r-references.bib")
-
-```
-\setlength{\parindent}{-0.5in}
-\setlength{\leftskip}{0.5in}
-
-
 ##Replication Demographic Analaysis
 ##Age Analysis
 ```{r}
@@ -510,13 +482,13 @@ my_citation <- cite_r(file = "/Users/ccasti02/Documents/Research/Research on MTu
 #Load Dataset
 require(dplyr)
 require(readxl)
-BLS_age <- read_excel("age_demo.xlsx")
+age_demo <- read_excel("age_demo.xlsx")
 
 #Define population mean. In this case it was already calculated in the dataset. 
 pop_mean <- as.numeric(age_demo[6 , 10])
 
 #Define sample mean
-MTurk17 <- read_excel("~/MTurk Diversity 2017 Data/2017 Data.xls")
+MTurk17 <- read_excel("2017 Data.xls")
 samp_mean <- as.numeric(MTurk17 %>%
   summarise(MTurk_age = mean(What.is.your.age., na.rm = TRUE)))
 
@@ -529,7 +501,9 @@ n <- as.numeric(667)
 
 #Run t test.
 t_value <- (samp_mean - pop_mean)/(samp_sd/sqrt(n))
-View(t_value)
+t_value
+
+#So MTurk is much younger than the population on average. We need to convert this to an effect size (Cohen's D). 
 ```
 
 ##Gender Analysis
@@ -575,9 +549,9 @@ View(gender_ch2)
 
 #Sum chi-square values.
 sum(gender_ch2$chi2, na.rm=TRUE)
+
+#So it appears that MTurk is largely dominated by females. We need to have an effect size describing this phenomena (e.g., a likelihood ratio).
 ```
-
-
 
 ##Ethnicity Analysis
 ```{r}
@@ -616,6 +590,7 @@ View(eth_ch2)
 #Sum chi-square values.
 sum(eth_ch2$chi2, na.rm=TRUE)
 ```
+
 ###Education Analysis 
 ```{r}
 #Education Analysis 
@@ -672,3 +647,31 @@ View(edu_ch2)
 sum(edu_ch2$chi2, na.rm=TRUE)
 ```
 
+
+#Discussion
+  What started our investigation was a simple research question: is the occupational diversity of the MTurk population representative of the broader US population? Our data suggest that the answer is not consistently so: certain occupations are over-represented, some fall within expectations, and still others are under-represented. Thus, OB researchers using convenient sampling procedures that draw on the MTurk population should consider whether occupational features might play a role in their investigation, which is point that we will elaborate upon in greater detail. Simply put, our results suggest that MTurk’s (US) occupational diversity does not align with the broader US economy. 
+
+#Recommendations for Researchers Using MTurk
+  Given that OB researchers will likely wish to continue using MTurk as a means of gathering diverse, convenient, and low-cost survey sample data, researchers should consider how differences in the occupational diversity observed amongst MTurk workers relative to the US population might impinge upon the generalizability of their findings (@newman2015external). Specifically, given the over-representation of workers from (1) Management, Business, and Financial, (2) Computer, Engineering, and Science, and (3) Education, Legal, Community Service, Arts, and Media occupations, we might safely assume that many of our findings from MTurk will generalize across jobs classified under these broader over-represented occupational categories. However, as many occupations were under-represented [e.g., (1) Service, (2) Construction and Extraction, (3) Installation, Maintenance, and Repair, (4) Production; and (5) Transportation and Material Moving], questions may arise as to whether findings will generalize to jobs falling under these broad classifications. 
+  To address this issue, researchers should consider capturing occupational data and modeling theoretically derived moderators. Person-environment (P-E) fit theories should help guide researchers in proposing how certain occupational groupings might influence individual-level relationships, lending to more nuanced and contextualized results (@how2009dr). Further, O*NET might be useful in this regard as it provides researchers a means for quantifying key occupational differences (e.g., level of competition requirements, social skills requirements) and thereby testing P-E fit hypotheses pertaining to occupational group differences (see @judge2015person). 
+
+##Limitations and Future Research
+  One key limitation is that we assumed that O*NET’s classification system perfectly captured all occupations during 2015. Additionally, as both studies involved convenient sampling procedures, it remains uncertain the extent to which these samples adequately reflect the larger MTurk population. Still, the consistency of our findings should be considered by future OB/HR researchers hoping to draw on MTurk for their research with the hopes of generalizing to the larger (or a specific) working US population. Additionally, as our studies were conducted in the US, it remains unclear how other MTurk populations might reflect (however imperfectly) their respective broader economy. Future larger scale studies should also consider lower levels of BLS occupational classification to examine the extent to which narrower occupations might not be represented by MTurk. Lastly, examining diversity in other respects (age, racio-ethnic, income, education, etc.) should also be considered. Though MTurk offers a practically feasible method of attaining high quality data, future research will be needed to understand the limitations of this tool.
+
+  Given that our data were gathered and analyzed in 2015, it might be insightful to have our procedures replicated annually to examine how the demographics of MTurk, specifically occupational characteristics, change over time, especially as access to technology becomes even easier and more commonplace. Thus, we encourage researchers to continue examining the occupational diversity of MTurk relative to the US economy. We also encourage researchers to consider novel ways of approximating the occupational diversity of both the US economy and MTurk because the currently existing taxonomies that we have used (i.e., BLS-based) probably do not capture all occupations. Lastly, our results raise a new and interesting research question: Why might MTurk possess the occupational diversity makeup that it does (i.e., why are some occupations over-represented while others are under-represented)? Similarly, what factors (e.g., access to technology, interest in psychology) might make it easier for workers coming from certain occupations to participate in OB studies hosted on MTurk? Answering these questions might unearth more constraints that impinge on the findings of OB studies using MTurk. 
+
+#Conclusion
+  We called into question the diversity of MTurk as a key strength and suggested one key area where diversity may be lacking: occupational diversity. Our results suggest that, compared to the broader US population, MTurk is not as diverse, both over- and underrepresenting certain occupations. Future research drawing on MTurk should consider how occupational differences might be theoretically relevant and incorporate these effects in analyses using MTurk sample data to help overcoming these shortcomings.
+  
+\newpage
+
+# References
+```{r}
+require(papaja)
+r_refs(file = "/Users/ccasti02/Documents/Research/Research on MTurk/MTurk's Occupational Diversity/r-references.bib")
+my_citation <- cite_r(file = "/Users/ccasti02/Documents/Research/Research on MTurk/MTurk's Occupational Diversity/r-references.bib")
+
+```
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+=======
