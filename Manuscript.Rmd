@@ -568,7 +568,7 @@ sum(BLS_eth)
 #Get MTurk ethnicity data
 MTurk_eth <- MTurk17 %>%
   count(MTurk17$With.which.ethnicity.do.you.most.identify.)
-
+MTurk_eth <- MTurk_eth[c(1:4), ]
 
 #Define confidence intervals 
 ethCI <- binom.confint(x = MTurk_eth$n, n = sum(MTurk_eth$n), conf.level = 0/95, methods = "exact")
@@ -590,6 +590,63 @@ View(eth_ch2)
 #Sum chi-square values.
 sum(eth_ch2$chi2, na.rm=TRUE)
 ```
+
+###Education Analysis 
+```{r}
+#Education Analysis 
+#Clean BLS Data. Get totals.  
+BLS_education_original <- read_excel("education_demo.xlsx")
+BLS_education <- as.data.frame(BLS_education_original[8:14, ])
+BLS_education <- BLS_education[1, c(-2, -3, -6)]
+names(BLS_education) <- c("category", "High school graduates, no college(1)", "Some college, no degree", "Associate degree", "Bachelor's degree only", "Advanced degree")
+
+#Combine categories as necessary. Get proportions.  
+highschool_ged <- c(as.numeric(BLS_education$`High school graduates, no college(1)`) + as.numeric(BLS_education$`Some college, no degree`))
+two_year_deg <- as.numeric(BLS_education$`Associate degree`)
+four_year_deg <- as.numeric(BLS_education$`Bachelor's degree only`)
+advanaced_deg <- as.numeric(BLS_education$`Advanced degree`)
+BLS_education <- c(highschool_ged, two_year_deg, four_year_deg, advanaced_deg)
+names(BLS_education) <- c("high school/GED" , "2 year degree", "4 year degree", "advanced degree")
+BLS_total <- as.numeric(sum(BLS_education))
+
+#Function to find proportion for each iteration of the vector. 
+e_prop <- function(x) {
+  e <- x/BLS_total
+}
+    
+#Use vapply and the above function to get expected proportions from BLS data
+BLS_edu <- sapply(BLS_education, prop_func)
+
+#Clean MTurk Data
+MTurk_education <- MTurk17 %>%
+  count(MTurk17$What.level.of.education.have.you.completed.)
+colnames(MTurk_education) <- c("education level", "n")
+advanced_deg <- as.numeric(MTurk_education[4,2]) + as.numeric(MTurk_education[5,2])
+MTurk_education <- rbind(MTurk_education, advanced_deg)
+MTurk_education[6,1] <- "advanced degree"
+MTurk_edu <- MTurk_education[c(-4, -5), ]
+
+#Define confidence intervals 
+eduCI <- binom.confint(x = MTurk_edu$n, n = sum(MTurk_edu$n), conf.level = 0/95, methods = "exact")
+eduCI <- eduCI[ , 4:6]
+
+#Build Education table 
+education_table <- cbind(MTurk_edu, eduCI, BLS_edu)
+names(education_table) <- c("education level", "n", "o", "LL_eth", "UL_eth", "e")
+education_table <- education_table[ , c(1, 6, 2, 4, 3, 5)]
+View(education_table)
+
+#Education chi squared test
+edu_ch2 <- as.data.frame(chi2(education_table))
+names(edu_ch2) <- c("chi2")
+row.names(edu_ch2) <- c("high school/GED" , "2 year degree", "4 year degree", "advanced degree")
+edu_ch2 <- na.omit(edu_ch2)
+View(edu_ch2)
+
+#Sum chi-square values.
+sum(edu_ch2$chi2, na.rm=TRUE)
+```
+
 
 #Discussion
   What started our investigation was a simple research question: is the occupational diversity of the MTurk population representative of the broader US population? Our data suggest that the answer is not consistently so: certain occupations are over-represented, some fall within expectations, and still others are under-represented. Thus, OB researchers using convenient sampling procedures that draw on the MTurk population should consider whether occupational features might play a role in their investigation, which is point that we will elaborate upon in greater detail. Simply put, our results suggest that MTurk’s (US) occupational diversity does not align with the broader US economy. 
@@ -617,4 +674,4 @@ my_citation <- cite_r(file = "/Users/ccasti02/Documents/Research/Research on MTu
 ```
 \setlength{\parindent}{-0.5in}
 \setlength{\leftskip}{0.5in}
-
+=======
