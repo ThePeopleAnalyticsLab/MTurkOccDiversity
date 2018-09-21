@@ -91,12 +91,16 @@ library(openxlsx)
 download.file("https://www.bls.gov/oes/special.requests/oesm15nat.zip", "BLS2015.zip")
 unzip("BLS2015.zip")
 library(readxl)
-national_M2015_dl <- read_excel("oesm15nat/national_M2015_dl.xlsx")
-View(national_M2015_dl)
+BLS <- read_excel("oesm15nat/national_M2015_dl.xlsx")
+BLS <- BLS[c(2,4)]
 
-#Edit the code below such that the newly downloaded data aligns with the code below. You'll need to include relative percentages. 
+#Include data on the size of the military (taken from the department of defense (http://us-military-branches.insidegov.com))
+BLS <- rbind(BLS, c("Military specific occupations", 1350236))
 
-BLS <- read_excel("~/Documents/Research/Research on MTurk/MTurk's Occupational Diversity/Datasets/BLS Data from 2015.xlsx")
+#Only major occupation groups are included in BLS
+BLS <- 
+BLS[c(2,71,129,162,222,293,320,336,432,494,586,612,653,687,705,767,810,923,950,1054,1130,1298,1395,1),]
+
 ###Rename rows and aggregate.
 BLS[1, 1] = "11-13 Management, Business, and Financial Occupations"
 BLS[2, 1] = "11-13 Management, Business, and Financial Occupations"
@@ -121,20 +125,28 @@ BLS[20, 1] = "49 Installation, Maintenance, and Repair Occupations"
 BLS[21, 1] = "51 Production Occupation"
 BLS[22, 1] = "53 Transportation and Material Moving Occupation"
 BLS[23, 1] = "55 Military Specific Occupations"
-names(BLS) <- c("Var1","Var2","Var3")
+names(BLS) <- c("Var1","Var2")
+BLS$Var2 <- as.numeric(BLS$Var2)
 BLS <- aggregate(.~Var1,BLS,sum)
-###Data on the size of the military taken from the department of defense (http://us-military-branches.insidegov.com). 
-BLS[13, 2] = "1350236"
-names(BLS) <- c("Intermediate Aggregation Title", "Freq","RFreq")
-BLS$Freq <- as.numeric(BLS$Freq)
-tab <- transform(BLS, relative = prop.table(Freq))
-BLS <- tab[c(1,4)]
-names(BLS) <- c("Intermediate Aggregation Title","e")
-```
 
-```{r Sample Data, include=FALSE, results='asis', echo=FALSE}
+#Add military occupation number to the overall
+BLS$Var2[14] <- BLS$Var2[13] + BLS$Var2[14]
+
+#Rename variables
+names(BLS) <- c("Intermediate Aggregation Title", "Freq")
+
+#Only keep occupational categories (no all). 
+BLS <- BLS[-14,]
+
+#Compute relative frequencies. Call the object "tab". 
+tab <- transform(BLS, relative = prop.table(Freq))
+
+#Define new BLS. "e" is for "relative frequency". 
+BLS <- tab[c(1,3)]
+names(BLS) <- c("Intermediate Aggregation Title", "e")
+
 ##LATech data
-LATech <- read_csv("/Users/ccasti02/Documents/Research/Research on MTurk/MTurk's Occupational Diversity/Datasets/Chris's Data from 2015.csv")
+LATech <- read_csv("Chris's Data from 2015.csv")
 ###Delete unneeded data.
 LATech <- LATech[c(1:3)]
 ###Edit data. Some participants provided incorrect codes or no codes.
@@ -211,7 +223,7 @@ names(tab) <- c("Intermediate Aggregation Title","n","f")
 table <- merge(BLS,tab, by="Intermediate Aggregation Title", all=TRUE)
 
 ##UGA data
-UGA <- read_excel("/Users/ccasti02/Documents/Research/Research on MTurk/MTurk's Occupational Diversity/Datasets/Rachel's Data from 2015.xlsx")
+UGA <- read_excel("Rachel's Data from 2015.xlsx")
 UGA <- UGA[c(2,21)]
 ###Edit data. Some individuals could be classified under O*NET, but weren't in this previous investigation. Keep in mind that only the first two numbers really matter, so if there are errors (and they be random) then they should wash out at the high level of the hierarchy. 
 ####Manually recode self-reported job titles.
