@@ -54,6 +54,7 @@ library("papaja")
 ```
 #Introduction
   Amazon’s Mechanical Turk (MTurk), an online labor market created by Amazon, has recently become popular among social scientists interested in collecting inexpensive, high-quality data from a diverse population (@aguinis2012conducting @behrend2011viability @bergman2016have @paolacci2014inside @shank2016using). Leveraging the strengths of this tool, MTurk has been used by social scientists to replicate well-known phenomena (e.g., reaction times, priming, task switching; @crump2013evaluating; memory, @simons2012common) and by organizational behavior (OB) researchers to expand the OB literature (e.g., @yarkoni2015interactions).
+
   
   Yet, in spite of the growing enthusiasm surrounding the use of MTurk, it represents merely another convenient sampling methodology that comes with a few constraints, such as repeated participation or motivation due to compensation (@landers2015inconvenient @woo2015amazon) and other yet-to-be-identified constraints. Here, we examine one potentially important constraint for using MTurk to conduct OB research: the occupational diversity of MTurk. Given that a fundamental goal of most OB research is that workers are sampled from an appropriate organizational setting (e.g., @pathak2008methodology), understanding the occupational diversity of MTurk will improve our understanding of the boundary conditions or limits to the generalizability of MTurk research findings. By examining the occupational diversity of MTurk, our work addresses a call for research that describes the kinds of individuals who participate in MTurk studies (@griggs2016these).
   
@@ -76,7 +77,7 @@ library("papaja")
 #insert table 1 about here
 #- - - - - - - - - - - - - 
 
-```{r,BLS, include=FALSE, results='asis'}
+```{r Load Data, include=FALSE, results='asis'}
 #Load packages
 library(readr)
 library(readxl)
@@ -91,12 +92,15 @@ library(openxlsx)
 download.file("https://www.bls.gov/oes/special.requests/oesm15nat.zip", "BLS2015.zip")
 unzip("BLS2015.zip")
 library(readxl)
-national_M2015_dl <- read_excel("oesm15nat/national_M2015_dl.xlsx")
-View(national_M2015_dl)
+BLS <- read_excel("oesm15nat/national_M2015_dl.xlsx")
+BLS <- BLS[c(2,4)]
 
-#Edit the code below such that the newly downloaded data aligns with the code below. You'll need to include relative percentages. 
+# Include data on the size of the military (taken from the department of defense (http://us-military-branches.insidegov.com))
+BLS <- rbind(BLS, c("Military Specific Occupations", 1350236))
 
-BLS <- read_excel("~/Documents/Research/Research on MTurk/MTurk's Occupational Diversity/Datasets/BLS Data from 2015.xlsx")
+#Only keep intermediate category totals.
+BLS <- BLS[c(2,71,129,162,222,293,320,336,432,494,586,612,653,687,705,767,810,923,950,1054,1130,1298,1395,1),]
+
 ###Rename rows and aggregate.
 BLS[1, 1] = "11-13 Management, Business, and Financial Occupations"
 BLS[2, 1] = "11-13 Management, Business, and Financial Occupations"
@@ -121,20 +125,28 @@ BLS[20, 1] = "49 Installation, Maintenance, and Repair Occupations"
 BLS[21, 1] = "51 Production Occupation"
 BLS[22, 1] = "53 Transportation and Material Moving Occupation"
 BLS[23, 1] = "55 Military Specific Occupations"
-names(BLS) <- c("Var1","Var2","Var3")
+names(BLS) <- c("Var1","Var2")
+BLS$Var2 <- as.numeric(BLS$Var2)
 BLS <- aggregate(.~Var1,BLS,sum)
-###Data on the size of the military taken from the department of defense (http://us-military-branches.insidegov.com). 
-BLS[13, 2] = "1350236"
-names(BLS) <- c("Intermediate Aggregation Title", "Freq","RFreq")
-BLS$Freq <- as.numeric(BLS$Freq)
-tab <- transform(BLS, relative = prop.table(Freq))
-BLS <- tab[c(1,4)]
-names(BLS) <- c("Intermediate Aggregation Title","e")
-```
 
-```{r Sample Data, include=FALSE, results='asis', echo=FALSE}
+#Add military occupation number to the overall. 
+BLS$Var2[14] <- BLS$Var2[13] + BLS$Var2[14]
+
+#Rename variables
+names(BLS) <- c("Intermediate Aggregation Title", "Freq")
+
+#Only keep occupational categories (no all).
+BLS <- BLS[-14,]
+
+#Compute relative frequencies. Call the object "tab".
+tab <- transform(BLS, relative = prop.table(Freq))
+
+#Define new BLS. "e" is for "relative frequency". 
+BLS <- tab[c(1,3)]
+names(BLS) <- c("Intermediate Aggregation Title","e")
+
 ##LATech data
-LATech <- read_csv("/Users/ccasti02/Documents/Research/Research on MTurk/MTurk's Occupational Diversity/Datasets/Chris's Data from 2015.csv")
+LATech <- read_csv("Data/Chris's Data from 2015.csv")
 ###Delete unneeded data.
 LATech <- LATech[c(1:3)]
 ###Edit data. Some participants provided incorrect codes or no codes.
@@ -168,11 +180,13 @@ LATech[782, 3] = "37-2012.00"
 LATech[785, 3] = "35-2014.00"
 LATech[786, 3] = "29-1123.00"
 LATech[784, 3] = "25-0000.00"
+
 ###Remove unemployed cases.
 completeFun <- function(data, desiredCols) {
   completeVec <- complete.cases(data[, desiredCols])
   return(data[completeVec, ])
 }
+
 LATech <- completeFun(LATech, "O*NET Job Code")
 
 ###Abbreviate data, consolidate into intermediate categories, and bind.
@@ -203,15 +217,17 @@ LO$Int.Agg.Cat[LO$Int.Agg.Cat == 51] <- "51 Production Occupation"
 LO$Int.Agg.Cat[LO$Int.Agg.Cat == 53] <- "53 Transportation and Material Moving Occupation"
 LO$Int.Agg.Cat[LO$Int.Agg.Cat == 55] <- "55 Military Specific Occupations"
 LATech <- cbind(LATech,LO)
+
 ###Build relative frequency table.
 tab <- as.data.frame(table(LATech$Int.Agg.Cat, exclude=NULL))
 tab <- transform(tab, relative = prop.table(Freq))
 names(tab) <- c("Intermediate Aggregation Title","n","f")
+
 #Table for poster.
 table <- merge(BLS,tab, by="Intermediate Aggregation Title", all=TRUE)
 
 ##UGA data
-UGA <- read_excel("/Users/ccasti02/Documents/Research/Research on MTurk/MTurk's Occupational Diversity/Datasets/Rachel's Data from 2015.xlsx")
+UGA <- read_excel("Data/Rachel's Data from 2015.xlsx")
 UGA <- UGA[c(2,21)]
 ###Edit data. Some individuals could be classified under O*NET, but weren't in this previous investigation. Keep in mind that only the first two numbers really matter, so if there are errors (and they be random) then they should wash out at the high level of the hierarchy. 
 ####Manually recode self-reported job titles.
@@ -459,6 +475,179 @@ pwr.chisq.test(w=r2,N=(sum(tab2$n2)),df=12,sig.level = .01)
 #insert table 2 about here
 #- - - - - - - - - - - - - 
 
+##Replication Demographic Analaysis
+##Age Analysis
+```{r}
+#Age Analysis T- Test
+#Load Dataset
+require(dplyr)
+require(readxl)
+age_demo <- read_excel("age_demo.xlsx")
+
+#Define population mean. In this case it was already calculated in the dataset. 
+pop_mean <- as.numeric(age_demo[6 , 10])
+
+#Define sample mean
+MTurk17 <- read_excel("2017 Data.xls")
+samp_mean <- as.numeric(MTurk17 %>%
+  summarise(MTurk_age = mean(What.is.your.age., na.rm = TRUE)))
+
+#Not able to get population standard deviation. Estimated using sample standard deviation.
+samp_sd <- as.numeric(MTurk17 %>%
+  summarise(sd_age = sd(What.is.your.age., na.rm = TRUE)))
+
+#Define sample size
+n <- as.numeric(667)
+
+#Run t test.
+t_value <- (samp_mean - pop_mean)/(samp_sd/sqrt(n))
+t_value
+
+#So MTurk is much younger than the population on average. We need to convert this to an effect size (Cohen's D). 
+```
+
+##Gender Analysis
+```{r}
+##Gender Analysis
+BLS_data <- read_excel("employment_demo.xlsx")
+
+#Get BLS gender data (expected value)
+BLS_women <- as.numeric(BLS_data[7,3])/100
+BLS_men <- 1.000 - BLS_women
+
+BLS_gender <- c(BLS_women, BLS_men, 0.0)
+
+#Get MTurk gender data (observed value)
+MTurk_gender <- MTurk17 %>%
+  count(What.is.your.gender.)
+
+#Define confidence intervals
+require(binom)
+gCI <- binom.confint(x = MTurk_gender$n, n = sum(MTurk_gender$n), conf.level = 0.95, methods = "exact")
+gCI <- gCI[ , 4:6]
+
+#Build Gender table with gender, expected value, n, LL, observed, UL
+gender_table <- cbind(MTurk_gender, gCI, BLS_gender)
+names(gender_table) <- c("gender", "n", "o", "LL_g", "UL_g", "e")
+gender_table <- gender_table[ 1, c(1, 2, 3, 4, 6, 5)]
+View(gender_table)
+
+#Gender chi square test
+
+chi2 <- function(x) {
+  o <- (x$n)
+  e <- (x$e)
+  n <- sum(x$n, na.rm=TRUE)
+  ((o-(e)*(n))^2)/((e)*(n))
+}
+
+gender_ch2 <- as.data.frame(chi2(gender_table))
+names(gender_ch2) <- c("chi2")
+row.names(gender_ch2) <- c("female")
+gender_ch2 <- na.omit(gender_ch2)
+View(gender_ch2)
+
+#Sum chi-square values.
+sum(gender_ch2$chi2, na.rm=TRUE)
+
+#So it appears that MTurk is largely dominated by females. We need to have an effect size describing this phenomena (e.g., a likelihood ratio).
+```
+
+##Ethnicity Analysis
+```{r}
+#Ethnicity Analysis 
+#Define obs_eth
+BLS_cauc <- as.numeric(BLS_data[7, 4])/100
+BLS_AfAm <- as.numeric(BLS_data[7,5])/100
+BLS_Asn <- as.numeric(BLS_data[7,6])/100
+BLS_Hisp <- as.numeric(BLS_data[7,7])/100
+BLS_eth <- c(BLS_AfAm, BLS_Asn, BLS_cauc, BLS_Hisp)
+
+sum(BLS_eth)
+
+#Get MTurk ethnicity data
+MTurk_eth <- MTurk17 %>%
+  count(MTurk17$With.which.ethnicity.do.you.most.identify.)
+MTurk_eth <- MTurk_eth[c(1:4), ]
+
+#Define confidence intervals 
+ethCI <- binom.confint(x = MTurk_eth$n, n = sum(MTurk_eth$n), conf.level = 0/95, methods = "exact")
+ethCI <- ethCI[ , 4:6]
+
+#Build Ethnicity table 
+ethnicity_table <- cbind(MTurk_eth, ethCI, BLS_eth)
+names(ethnicity_table) <- c("ethnicity", "n", "o", "LL_eth", "UL_eth", "e")
+eth_table <- ethnicity_table[1:4 , c(1, 6, 2, 4, 3, 5)]
+View(eth_table)
+
+#Ethnicity chi squared test
+eth_ch2 <- as.data.frame(chi2(eth_table))
+names(eth_ch2) <- c("chi2")
+row.names(eth_ch2) <- c("African American", "Asian", "Caucasian", "Hispanic")
+eth_ch2 <- na.omit(eth_ch2)
+View(eth_ch2)
+
+#Sum chi-square values.
+sum(eth_ch2$chi2, na.rm=TRUE)
+```
+
+###Education Analysis 
+```{r}
+#Education Analysis 
+#Clean BLS Data. Get totals.  
+BLS_education_original <- read_excel("education_demo.xlsx")
+BLS_education <- as.data.frame(BLS_education_original[8:14, ])
+BLS_education <- BLS_education[1, c(-2, -3, -6)]
+names(BLS_education) <- c("category", "High school graduates, no college(1)", "Some college, no degree", "Associate degree", "Bachelor's degree only", "Advanced degree")
+
+#Combine categories as necessary. Get proportions.  
+highschool_ged <- c(as.numeric(BLS_education$`High school graduates, no college(1)`) + as.numeric(BLS_education$`Some college, no degree`))
+two_year_deg <- as.numeric(BLS_education$`Associate degree`)
+four_year_deg <- as.numeric(BLS_education$`Bachelor's degree only`)
+advanaced_deg <- as.numeric(BLS_education$`Advanced degree`)
+BLS_education <- c(highschool_ged, two_year_deg, four_year_deg, advanaced_deg)
+names(BLS_education) <- c("high school/GED" , "2 year degree", "4 year degree", "advanced degree")
+BLS_total <- as.numeric(sum(BLS_education))
+
+#Function to find proportion for each iteration of the vector. 
+e_prop <- function(x) {
+  e <- x/BLS_total
+}
+    
+#Use vapply and the above function to get expected proportions from BLS data
+BLS_edu <- sapply(BLS_education, prop_func)
+
+#Clean MTurk Data
+MTurk_education <- MTurk17 %>%
+  count(MTurk17$What.level.of.education.have.you.completed.)
+colnames(MTurk_education) <- c("education level", "n")
+advanced_deg <- as.numeric(MTurk_education[4,2]) + as.numeric(MTurk_education[5,2])
+MTurk_education <- rbind(MTurk_education, advanced_deg)
+MTurk_education[6,1] <- "advanced degree"
+MTurk_edu <- MTurk_education[c(-4, -5), ]
+
+#Define confidence intervals 
+eduCI <- binom.confint(x = MTurk_edu$n, n = sum(MTurk_edu$n), conf.level = 0/95, methods = "exact")
+eduCI <- eduCI[ , 4:6]
+
+#Build Education table 
+education_table <- cbind(MTurk_edu, eduCI, BLS_edu)
+names(education_table) <- c("education level", "n", "o", "LL_eth", "UL_eth", "e")
+education_table <- education_table[ , c(1, 6, 2, 4, 3, 5)]
+View(education_table)
+
+#Education chi squared test
+edu_ch2 <- as.data.frame(chi2(education_table))
+names(edu_ch2) <- c("chi2")
+row.names(edu_ch2) <- c("high school/GED" , "2 year degree", "4 year degree", "advanced degree")
+edu_ch2 <- na.omit(edu_ch2)
+View(edu_ch2)
+
+#Sum chi-square values.
+sum(edu_ch2$chi2, na.rm=TRUE)
+```
+
+
 #Discussion
   What started our investigation was a simple research question: is the occupational diversity of the MTurk population representative of the broader US population? Our data suggest that the answer is not consistently so: certain occupations are over-represented, some fall within expectations, and still others are under-represented. Thus, OB researchers using convenient sampling procedures that draw on the MTurk population should consider whether occupational features might play a role in their investigation, which is point that we will elaborate upon in greater detail. Simply put, our results suggest that MTurk’s (US) occupational diversity does not align with the broader US economy. 
 
@@ -485,3 +674,4 @@ my_citation <- cite_r(file = "/Users/ccasti02/Documents/Research/Research on MTu
 ```
 \setlength{\parindent}{-0.5in}
 \setlength{\leftskip}{0.5in}
+=======
