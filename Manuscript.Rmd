@@ -53,17 +53,16 @@ output            : papaja::apa6_pdf
 library("papaja")
 ```
 #Introduction
-  Amazon’s Mechanical Turk (MTurk), an online labor market created by Amazon, has recently become popular among social scientists interested in collecting inexpensive, high-quality data from a diverse population (@aguinis2012conducting @behrend2011viability @bergman2016have @paolacci2014inside @shank2016using). Leveraging the strengths of this tool, MTurk has been used by social scientists to replicate well-known phenomena (e.g., reaction times, priming, task switching; @crump2013evaluating; memory, @simons2012common) and by organizational behavior (OB) researchers to expand the OB literature (e.g., @yarkoni2015interactions).
+  Amazon’s Mechanical Turk (MTurk), an online labor market created by Amazon, has recently become popular among social scientists interested in collecting inexpensive, high-quality data from a diverse population [@aguinis2012conducting @behrend2011viability @bergman2016have @paolacci2014inside @shank2016using]. Leveraging the strengths of this tool, MTurk has been used by social scientists to replicate well-known phenomena [e.g., reaction times, priming, task switching; @crump2013evaluating; memory, @simons2012common] and by organizational behavior (OB) researchers to expand the OB literature [e.g., @yarkoni2015interactions].
 
-  
-  Yet, in spite of the growing enthusiasm surrounding the use of MTurk, it represents merely another convenient sampling methodology that comes with a few constraints, such as repeated participation or motivation due to compensation (@landers2015inconvenient @woo2015amazon) and other yet-to-be-identified constraints. Here, we examine one potentially important constraint for using MTurk to conduct OB research: the occupational diversity of MTurk. Given that a fundamental goal of most OB research is that workers are sampled from an appropriate organizational setting (e.g., @pathak2008methodology), understanding the occupational diversity of MTurk will improve our understanding of the boundary conditions or limits to the generalizability of MTurk research findings. By examining the occupational diversity of MTurk, our work addresses a call for research that describes the kinds of individuals who participate in MTurk studies (@griggs2016these).
+  Yet, in spite of the growing enthusiasm surrounding the use of MTurk, it represents merely another convenient sampling methodology that comes with a few constraints, such as repeated participation or motivation due to compensation [@landers2015inconvenient @woo2015amazon] and other yet-to-be-identified constraints. Here, we examine one potentially important constraint for using MTurk to conduct OB research: the occupational diversity of MTurk. Given that a fundamental goal of most OB research is that workers are sampled from an appropriate organizational setting [e.g., @pathak2008methodology], understanding the occupational diversity of MTurk will improve our understanding of the boundary conditions or limits to the generalizability of MTurk research findings. By examining the occupational diversity of MTurk, our work addresses a call for research that describes the kinds of individuals who participate in MTurk studies [@griggs2016these].
   
 #Review of the Literature
 ##What is MTurk?
-  MTurk is an internet marketplace where people seeking laborers have access to a population of workers willing to do tasks requiring a human intelligence for a small fee (@behrend2011viability). Billed as a “marketplace for work that requires human intelligence”, MTurk allows “requesters” to post Human Intelligence Tasks (HITs), which serve as self-contained jobs in which “workers” can participate. Via MTurk, researchers seeking participants often post survey studies for workers to voluntarily complete (@goodman2013data). Workers are given a short description about a project, including details about various tasks, estimated time investment, and payment, and may selectively choose which projects to complete. Here, researchers seeking participants often post survey studies for workers to voluntarily complete (@goodman2013data).
+  MTurk is an internet marketplace where people seeking laborers have access to a population of workers willing to do tasks requiring a human intelligence for a small fee [@behrend2011viability]. Billed as a “marketplace for work that requires human intelligence”, MTurk allows “requesters” to post Human Intelligence Tasks (HITs), which serve as self-contained jobs in which “workers” can participate. Via MTurk, researchers seeking participants often post survey studies for workers to voluntarily complete [@goodman2013data]. Workers are given a short description about a project, including details about various tasks, estimated time investment, and payment, and may selectively choose which projects to complete. Here, researchers seeking participants often post survey studies for workers to voluntarily complete [@goodman2013data].
   
 ##Why is MTurk Valuable for Researchers Studying Working Populations?
-  MTurk offers practical advantages that may not be available via other more traditional methods of data collection, such as sampling from specific organizations (@paolacci2010running). The platform allows for easier subject pool access at an affordable cost and for subject prescreening (@mason2012conducting). Additionally, it allows for subject anonymity, subject identifiability in longitudinal studies, and offers a simple and supportive infrastructure (@paolacci2010running). More importantly, its diversity is a key strength that sets it apart from other commonly studied populations (e.g., university students, community samples), making it an attractive subject pool for researchers to draw upon (@buhrmester2011amazon; Erikson & Simpson, 2010; @paolacci2010running). For instance, @behrend2011viability found that MTurk workers are more diverse on variables such as age, ethnicity, education, employment status, job experience, profession, nationality, and personality. The diversity of MTurk allows OB researchers to overcome concerns regarding the generalizability of their findings (e.g., @paolacci2010running), which has been a key concern facing OB research (@chiao2010weirdest).
+  MTurk offers practical advantages that may not be available via other more traditional methods of data collection, such as sampling from specific organizations [@paolacci2010running]. The platform allows for easier subject pool access at an affordable cost and for subject prescreening [@mason2012conducting]. Additionally, it allows for subject anonymity, subject identifiability in longitudinal studies, and offers a simple and supportive infrastructure [@paolacci2010running]. More importantly, its diversity is a key strength that sets it apart from other commonly studied populations (e.g., university students, community samples), making it an attractive subject pool for researchers to draw upon [@buhrmester2011amazon; Erikson & Simpson, 2010; @paolacci2010running]. For instance, @behrend2011viability found that MTurk workers are more diverse on variables such as age, ethnicity, education, employment status, job experience, profession, nationality, and personality. The diversity of MTurk allows OB researchers to overcome concerns regarding the generalizability of their findings [e.g., @paolacci2010running], which has been a key concern facing OB research [@chiao2010weirdest].
   
   However, while researchers have praised MTurk for its diversity, few organizational behavior researchers have considered how MTurk might be less diverse than expected in a key respect: occupational diversity. To our knowledge, no study has compared the occupational diversity of MTurk to the broader US population. While @behrend2011viability work suggests that MTurk’s occupational diversity is greater than the university population, our work expands on their research by comparing MTurk’s occupational diversity to the broader US population. If the occupational diversity of the broader US population is indeed reflected in MTurk, findings from MTurk should better generalize across occupations. Alternatively, if MTurk’s occupational diversity over- or under-represent certain occupations, generalizability of findings from MTurk should be more limited.
   
@@ -94,6 +93,13 @@ unzip("BLS2015.zip")
 library(readxl)
 BLS <- read_excel("oesm15nat/national_M2015_dl.xlsx")
 BLS <- BLS[c(2,4)]
+
+#Include data on the size of the military (taken from the department of defense (http://us-military-branches.insidegov.com))
+BLS <- rbind(BLS, c("Military specific occupations", 1350236))
+
+#Only major occupation groups are included in BLS
+BLS <- 
+BLS[c(2,71,129,162,222,293,320,336,432,494,586,612,653,687,705,767,810,923,950,1054,1130,1298,1395,1),]
 
 # Include data on the size of the military (taken from the department of defense (http://us-military-branches.insidegov.com))
 BLS <- rbind(BLS, c("Military Specific Occupations", 1350236))
@@ -135,6 +141,19 @@ BLS$Var2[14] <- BLS$Var2[13] + BLS$Var2[14]
 #Rename variables
 names(BLS) <- c("Intermediate Aggregation Title", "Freq")
 
+#Only keep occupational categories (no all). 
+BLS <- BLS[-14,]
+
+#Compute relative frequencies. Call the object "tab". 
+tab <- transform(BLS, relative = prop.table(Freq))
+
+#Define new BLS. "e" is for "relative frequency". 
+BLS <- tab[c(1,3)]
+names(BLS) <- c("Intermediate Aggregation Title", "e")
+
+##LATech data
+LATech <- read_csv("Chris's Data from 2015.csv")
+
 #Only keep occupational categories (no all).
 BLS <- BLS[-14,]
 
@@ -147,6 +166,7 @@ names(BLS) <- c("Intermediate Aggregation Title","e")
 
 ##LATech data
 LATech <- read_csv("Data/Chris's Data from 2015.csv")
+
 ###Delete unneeded data.
 LATech <- LATech[c(1:3)]
 ###Edit data. Some participants provided incorrect codes or no codes.
@@ -227,6 +247,7 @@ names(tab) <- c("Intermediate Aggregation Title","n","f")
 table <- merge(BLS,tab, by="Intermediate Aggregation Title", all=TRUE)
 
 ##UGA data
+UGA <- read_excel("Rachel's Data from 2015.xlsx")
 UGA <- read_excel("Data/Rachel's Data from 2015.xlsx")
 UGA <- UGA[c(2,21)]
 ###Edit data. Some individuals could be classified under O*NET, but weren't in this previous investigation. Keep in mind that only the first two numbers really matter, so if there are errors (and they be random) then they should wash out at the high level of the hierarchy. 
@@ -652,8 +673,8 @@ sum(edu_ch2$chi2, na.rm=TRUE)
   What started our investigation was a simple research question: is the occupational diversity of the MTurk population representative of the broader US population? Our data suggest that the answer is not consistently so: certain occupations are over-represented, some fall within expectations, and still others are under-represented. Thus, OB researchers using convenient sampling procedures that draw on the MTurk population should consider whether occupational features might play a role in their investigation, which is point that we will elaborate upon in greater detail. Simply put, our results suggest that MTurk’s (US) occupational diversity does not align with the broader US economy. 
 
 #Recommendations for Researchers Using MTurk
-  Given that OB researchers will likely wish to continue using MTurk as a means of gathering diverse, convenient, and low-cost survey sample data, researchers should consider how differences in the occupational diversity observed amongst MTurk workers relative to the US population might impinge upon the generalizability of their findings (@newman2015external). Specifically, given the over-representation of workers from (1) Management, Business, and Financial, (2) Computer, Engineering, and Science, and (3) Education, Legal, Community Service, Arts, and Media occupations, we might safely assume that many of our findings from MTurk will generalize across jobs classified under these broader over-represented occupational categories. However, as many occupations were under-represented [e.g., (1) Service, (2) Construction and Extraction, (3) Installation, Maintenance, and Repair, (4) Production; and (5) Transportation and Material Moving], questions may arise as to whether findings will generalize to jobs falling under these broad classifications. 
-  To address this issue, researchers should consider capturing occupational data and modeling theoretically derived moderators. Person-environment (P-E) fit theories should help guide researchers in proposing how certain occupational groupings might influence individual-level relationships, lending to more nuanced and contextualized results (@how2009dr). Further, O*NET might be useful in this regard as it provides researchers a means for quantifying key occupational differences (e.g., level of competition requirements, social skills requirements) and thereby testing P-E fit hypotheses pertaining to occupational group differences (see @judge2015person). 
+  Given that OB researchers will likely wish to continue using MTurk as a means of gathering diverse, convenient, and low-cost survey sample data, researchers should consider how differences in the occupational diversity observed amongst MTurk workers relative to the US population might impinge upon the generalizability of their findings [@newman2015external]. Specifically, given the over-representation of workers from (1) Management, Business, and Financial, (2) Computer, Engineering, and Science, and (3) Education, Legal, Community Service, Arts, and Media occupations, we might safely assume that many of our findings from MTurk will generalize across jobs classified under these broader over-represented occupational categories. However, as many occupations were under-represented [e.g., (1) Service, (2) Construction and Extraction, (3) Installation, Maintenance, and Repair, (4) Production; and (5) Transportation and Material Moving], questions may arise as to whether findings will generalize to jobs falling under these broad classifications. 
+  To address this issue, researchers should consider capturing occupational data and modeling theoretically derived moderators. Person-environment (P-E) fit theories should help guide researchers in proposing how certain occupational groupings might influence individual-level relationships, lending to more nuanced and contextualized results [@how2009dr]. Further, O*NET might be useful in this regard as it provides researchers a means for quantifying key occupational differences (e.g., level of competition requirements, social skills requirements) and thereby testing P-E fit hypotheses pertaining to occupational group differences [see @judge2015person]. 
 
 ##Limitations and Future Research
   One key limitation is that we assumed that O*NET’s classification system perfectly captured all occupations during 2015. Additionally, as both studies involved convenient sampling procedures, it remains uncertain the extent to which these samples adequately reflect the larger MTurk population. Still, the consistency of our findings should be considered by future OB/HR researchers hoping to draw on MTurk for their research with the hopes of generalizing to the larger (or a specific) working US population. Additionally, as our studies were conducted in the US, it remains unclear how other MTurk populations might reflect (however imperfectly) their respective broader economy. Future larger scale studies should also consider lower levels of BLS occupational classification to examine the extent to which narrower occupations might not be represented by MTurk. Lastly, examining diversity in other respects (age, racio-ethnic, income, education, etc.) should also be considered. Though MTurk offers a practically feasible method of attaining high quality data, future research will be needed to understand the limitations of this tool.
