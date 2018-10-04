@@ -578,14 +578,12 @@ ethCI <- ethCI[ , 4:6]
 ethnicity_table <- cbind(MTurk_eth, ethCI, BLS_eth)
 names(ethnicity_table) <- c("ethnicity", "n", "o", "LL_eth", "UL_eth", "e")
 eth_table <- ethnicity_table[1:4 , c(1, 6, 2, 4, 3, 5)]
-View(eth_table)
 
 #Ethnicity chi squared test
 eth_ch2 <- as.data.frame(chi2(eth_table))
 names(eth_ch2) <- c("chi2")
 row.names(eth_ch2) <- c("African American", "Asian", "Caucasian", "Hispanic")
 eth_ch2 <- na.omit(eth_ch2)
-View(eth_ch2)
 
 #Sum chi-square values.
 sum(eth_ch2$chi2, na.rm=TRUE)
@@ -615,7 +613,7 @@ e_prop <- function(x) {
 }
     
 #Use vapply and the above function to get expected proportions from BLS data
-BLS_edu <- sapply(BLS_education, prop_func)
+BLS_edu <- sapply(BLS_education, e_prop)
 
 #Clean MTurk Data
 MTurk_education <- MTurk17 %>%
@@ -634,14 +632,12 @@ eduCI <- eduCI[ , 4:6]
 education_table <- cbind(MTurk_edu, eduCI, BLS_edu)
 names(education_table) <- c("education level", "n", "o", "LL_eth", "UL_eth", "e")
 education_table <- education_table[ , c(1, 6, 2, 4, 3, 5)]
-View(education_table)
 
 #Education chi squared test
 edu_ch2 <- as.data.frame(chi2(education_table))
 names(edu_ch2) <- c("chi2")
 row.names(edu_ch2) <- c("high school/GED" , "2 year degree", "4 year degree", "advanced degree")
 edu_ch2 <- na.omit(edu_ch2)
-View(edu_ch2)
 
 #Sum chi-square values.
 sum(edu_ch2$chi2, na.rm=TRUE)
