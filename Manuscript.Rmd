@@ -474,6 +474,43 @@ pwr.chisq.test(w=r2,N=(sum(tab2$n2)),df=12,sig.level = .01)
 #- - - - - - - - - - - - - 
 #insert table 2 about here
 #- - - - - - - - - - - - - 
+##Chart 1
+```{r}
+#Bar Plot with error bars
+require(ggplot2)
+Values <- c(Table2[1:13, 5], Table2[1:13, 2])
+Group <- c("MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS")
+Occupations <- c(Table2[1:13, 1], Table2[1:13, 1])
+Occ_Nums <- sapply(strsplit(Occupations, " "), "[[", 1)
+barplot_data <- data.frame(as.character(Values), as.character(Occ_Nums),as.character(Group))
+names(barplot_data) <- c("Frequency", "Occupations","Group")
+dodge <- position_dodge(width = .9)
+
+#Define Error Bar limits.
+upperM <- as.vector(Table2[1:13, 6])
+upperB <- c(0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+upper <-c(upperM, upperB)
+
+lowerM <- as.vector(Table2[1:13, 6])
+lowerB <- c(0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+lower <- c(lowerM, lowerB)
+
+se <- data.frame(upper, lower)
+limits <- aes(ymax = se$upper, ymin = se$lower)
+
+require(ggplot2)
+ggplot(barplot_data, aes(Occ_Nums, Values, fill = Group)) + 
+  geom_errorbar(limits, position = dodge,
+                width = 0.10, size = 1.0) +
+  geom_col(position = dodge)  +
+  ggtitle("MTurk's Occupational Diveristy with Error Bars") +
+  labs(x = "Occupation", y = "Frequency") +
+  theme(legend.position = "top", plot.title = element_text(hjust = 0.5), 
+        text=element_text(family="serif"))+
+  coord_flip()
+```
+
+
 
 ##Replication Demographic Analaysis
 ##Age Analysis
