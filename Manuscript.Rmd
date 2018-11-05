@@ -474,6 +474,43 @@ pwr.chisq.test(w=r2,N=(sum(tab2$n2)),df=12,sig.level = .01)
 #- - - - - - - - - - - - - 
 #insert table 2 about here
 #- - - - - - - - - - - - - 
+##Chart 1
+```{r}
+#Bar Plot with error bars
+require(ggplot2)
+Values <- c(Table2[1:13, 5], Table2[1:13, 2])
+Group <- c("MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS")
+Occupations <- c(Table2[1:13, 1], Table2[1:13, 1])
+Occ_Nums <- sapply(strsplit(Occupations, " "), "[[", 1)
+barplot_data <- data.frame(as.character(Values), as.character(Occ_Nums),as.character(Group))
+names(barplot_data) <- c("Frequency", "Occupations","Group")
+dodge <- position_dodge(width = .9)
+
+#Define Error Bar limits.
+upperM <- as.vector(Table2[1:13, 6])
+upperB <- c(0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+upper <-c(upperM, upperB)
+
+lowerM <- as.vector(Table2[1:13, 6])
+lowerB <- c(0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+lower <- c(lowerM, lowerB)
+
+se <- data.frame(upper, lower)
+limits <- aes(ymax = se$upper, ymin = se$lower)
+
+require(ggplot2)
+ggplot(barplot_data, aes(Occ_Nums, Values, fill = Group)) + 
+  geom_errorbar(limits, position = dodge,
+                width = 0.10, size = 1.0) +
+  geom_col(position = dodge)  +
+  ggtitle("MTurk's Occupational Diveristy with Error Bars") +
+  labs(x = "Occupation", y = "Frequency") +
+  theme(legend.position = "top", plot.title = element_text(hjust = 0.5), 
+        text=element_text(family="serif"))+
+  coord_flip()
+```
+
+
 
 ##Replication Demographic Analaysis
 ##Age Analysis
@@ -578,14 +615,12 @@ ethCI <- ethCI[ , 4:6]
 ethnicity_table <- cbind(MTurk_eth, ethCI, BLS_eth)
 names(ethnicity_table) <- c("ethnicity", "n", "o", "LL_eth", "UL_eth", "e")
 eth_table <- ethnicity_table[1:4 , c(1, 6, 2, 4, 3, 5)]
-View(eth_table)
 
 #Ethnicity chi squared test
 eth_ch2 <- as.data.frame(chi2(eth_table))
 names(eth_ch2) <- c("chi2")
 row.names(eth_ch2) <- c("African American", "Asian", "Caucasian", "Hispanic")
 eth_ch2 <- na.omit(eth_ch2)
-View(eth_ch2)
 
 #Sum chi-square values.
 sum(eth_ch2$chi2, na.rm=TRUE)
@@ -615,7 +650,7 @@ e_prop <- function(x) {
 }
     
 #Use vapply and the above function to get expected proportions from BLS data
-BLS_edu <- sapply(BLS_education, prop_func)
+BLS_edu <- sapply(BLS_education, e_prop)
 
 #Clean MTurk Data
 MTurk_education <- MTurk17 %>%
@@ -634,14 +669,12 @@ eduCI <- eduCI[ , 4:6]
 education_table <- cbind(MTurk_edu, eduCI, BLS_edu)
 names(education_table) <- c("education level", "n", "o", "LL_eth", "UL_eth", "e")
 education_table <- education_table[ , c(1, 6, 2, 4, 3, 5)]
-View(education_table)
 
 #Education chi squared test
 edu_ch2 <- as.data.frame(chi2(education_table))
 names(edu_ch2) <- c("chi2")
 row.names(edu_ch2) <- c("high school/GED" , "2 year degree", "4 year degree", "advanced degree")
 edu_ch2 <- na.omit(edu_ch2)
-View(edu_ch2)
 
 #Sum chi-square values.
 sum(edu_ch2$chi2, na.rm=TRUE)
