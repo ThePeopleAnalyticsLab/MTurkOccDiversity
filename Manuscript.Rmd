@@ -1,155 +1,171 @@
 ---
-title             : "Comparing MTurk and the US Population’s Occupational Diversity"
+title             : "Comparing the Occupational and Demographic Diversity of Amazon's Mechanical Turk to the U.S. Labor Force"
 shorttitle        : "MTurk's Occupational Diversity"
 
 author: 
   - name          : "Christopher M. Castille"
     affiliation   : "1"
     corresponding : yes    # Define only one corresponding author
+    address       : "906 E. 1st St., Thibodaux, LA, 70301"
     email         : "chris_castille@mac.com"
-  - name          : "Bodour H. Mahmoud"
-    affiliation   : "2"
+  - name          : "Kathryn Daigle"
+    affiliation   : "1"
+  - name          : "Sarah Avet"
+    affiliation   : "1"
   - name          : "Rachel L. Williamson"
+    affiliation   : "2"
+  - name          : "Bodour H. Mahmoud"
     affiliation   : "3"
   - name          : "John E. Buckner"
     affiliation   : "4"
-  - name          : "James De Leôn"
-    affiliation   : "5"
 affiliation:
   - id            : "1"
     institution   : "Nicholls State University"
   - id            : "2"
-    institution   : "Villanova University"
+    institution   : "Louisiana State University"
   - id            : "3"
-    institution   : "University of Georgia"
+    institution   : "Villanova University"
   - id            : "4"
     institution   : "AlixPartners"
-  - id            : "5"
-    institution   : "APT Metrics"
 
 author_note: >
-  All correspondence should be sent to the lead author at chris_castille@mac.com.
+  All correspondence should be sent to the lead author at chris_castille@mac.com. 
 
 abstract: >
-  We compare the occupational diversity of two convenient MTurk samples against the broader US economy from which they have been indirectly sampled. We focus on occupational diversity given a chief concern that findings from OB/HR investigations relying on MTurk might not generalize to the broader US economy . Additionally, as researchers may hope to target specific populations (e.g., sales professionals) understanding the extent to which these professionals are represented in the MTurk population would be helpful. Therefore, we compare the occupational diversity of MTurk against that described by the Bureau of Labor Statistics, testing the null hypothesis that these populations are equivalent in terms of occupational diversity. Across both samples, which were obtained from studies conducted in 2015, we found differences suggesting that the MTurk population is generally overrepresented by white collar professionals (though this is an imperfect trend) and generally underrepresented by blue collar workers.
-keywords          : "MTurk, Occupational Diversity"
+  We compare the occupational diversity of three conveniently gathered MTurk samples (two in 2015, one in 2017) against the broader US labor force from which they have been indirectly sampled. We focus on occupational diversity given concerns regarding the the generalizability of findings into organizational life that have been drawn from studies utilizing MTurk. Additionally, as researchers may hope to target specific populations (e.g., sales professionals) understanding the extent to which these professionals are over- or under- represented in the MTurk population would inform decisions regarding the cost-effectiveness of sampling techniques. Across our samples, we found differences suggesting that the MTurk population is generally overrepresented by white collar professionals (though this is an imperfect trend). Other demographic trends were also explored regarding age, gender, and education. Overall, the MTurk population appears to fall short of an ideal representation of the broader labor force. 
+
+header-includes:
+  - \raggedbottom
+  
+keywords          : "MTurk, Occupational Diversity, Demographics"
+
 wordcount         : "3000"
 
 bibliography      : ["references.bib"]
 
-figsintext        : no
+figsintext        : yes
 figurelist        : no
-tablelist         : yes
+tablelist         : no
 footnotelist      : no
-lineno            : no
+lineno            : yes
 
 lang              : "english"
 class             : "man"
 output            : papaja::apa6_pdf
 ---
-
-```{r message = FALSE, warning = FALSE}
-#The packages below will allow you to access "papaja", and if it fails, then try running all of the code at once. It should work then. 
-library("papaja")
+```{r Load Packages, include=FALSE}
+# Load packages
+library(papaja)         # Print in apa style
+library(readr)          # Reading data
+library(readxl)         # Reading data
+library(data.table)     # Reading data
+library(openxlsx)       # Reading data
+library(fifer)          # Post hoc chi-sqaure testing
+library(binom)          # Confidence intervals for proportions
+library(apa)            # Print results in apa format
+library(pwr)            # Power analysis tools
+library(RVAideMemoire)  # Conduct post-hoc test
+library(ggplot2)        # Graphing results
+library(scales)         # For printing frequencies as percentages
+library(tidyquant)      # Used in demographic analysis
+library(lsr)            # Useful for conducting one-sample t-tests and estiamting Cohen's D
 ```
-#Introduction
-  Amazon’s Mechanical Turk (MTurk), an online labor market created by Amazon, has recently become popular among social scientists interested in collecting inexpensive, high-quality data from a diverse population (@aguinis2012conducting @behrend2011viability @bergman2016have @paolacci2014inside @shank2016using). Leveraging the strengths of this tool, MTurk has been used by social scientists to replicate well-known phenomena (e.g., reaction times, priming, task switching; @crump2013evaluating; memory, @simons2012common) and by organizational behavior (OB) researchers to expand the OB literature (e.g., @yarkoni2015interactions).
+# Introduction
+Amazon’s Mechanical Turk (MTurk), an online labor market created by Amazon, has recently become popular among social scientists interested in collecting inexpensive, high-quality data from a diverse population [@aguinisConductingFieldExperiments2012; @behrendViabilityCrowdsourcingSurvey2011; @bergmanWhereHaveAll2016; @paolacciTurkUnderstandingMechanical2014; @shankUsingCrowdsourcingWebsites2016]. Leveraging the strengths of this tool, MTurk has been used by social scientists to replicate well-known phenomena [e.g., reaction times, priming, task switching, see @crumpEvaluatingAmazonMechanical2013; memory, see @simonsCommonMisBeliefs2012 and by organizational behavior (OB) researchers to expand the OB literature [e.g., @yarkoniInteractionsDonorAgreeableness2015].
 
+Yet, in spite of the growing enthusiasm surrounding the use of MTurk, it represents merely another convenient sampling methodology that comes with a few constraints, such as repeated participation or motivation due to compensation [@landersInconvenientTruthArbitrary2015; @wooAmazonMechanicalTurk2015] and other yet-to-be-identified constraints. Here, we examine one potentially important constraint for using MTurk to conduct OB research: the occupational diversity of MTurk. Given that a fundamental goal of most OB research is that workers are sampled from an appropriate organizational setting, understanding the occupational diversity of MTurk will improve our understanding of the boundary conditions or limits to the generalizability of MTurk research findings. By examining the occupational diversity of MTurk, our work addresses a call for research that describes the kinds of individuals who participate in MTurk studies [@griggsWhoAreThese2016].
+
+# Review of the Literature
+
+## What is MTurk?
+MTurk is an internet marketplace where people seeking laborers have access to a population of workers willing to do tasks requiring a human intelligence for a small fee [@landersInconvenientTruthArbitrary2015]. Billed as a “marketplace for work that requires human intelligence”, MTurk allows “requesters” to post Human Intelligence Tasks (HITs), which serve as self-contained jobs in which “workers” can participate. Via MTurk, researchers seeking participants often post survey studies for workers to voluntarily complete. Workers are given a short description about a project, including details about various tasks, estimated time investment, and payment, and may selectively choose which projects to complete. Here, researchers seeking participants often post survey studies for workers to voluntarily complete.
   
-  Yet, in spite of the growing enthusiasm surrounding the use of MTurk, it represents merely another convenient sampling methodology that comes with a few constraints, such as repeated participation or motivation due to compensation (@landers2015inconvenient @woo2015amazon) and other yet-to-be-identified constraints. Here, we examine one potentially important constraint for using MTurk to conduct OB research: the occupational diversity of MTurk. Given that a fundamental goal of most OB research is that workers are sampled from an appropriate organizational setting (e.g., @pathak2008methodology), understanding the occupational diversity of MTurk will improve our understanding of the boundary conditions or limits to the generalizability of MTurk research findings. By examining the occupational diversity of MTurk, our work addresses a call for research that describes the kinds of individuals who participate in MTurk studies (@griggs2016these).
+## The Value of Studying Working Populations with MTurk
   
-#Review of the Literature
-##What is MTurk?
-  MTurk is an internet marketplace where people seeking laborers have access to a population of workers willing to do tasks requiring a human intelligence for a small fee (@behrend2011viability). Billed as a “marketplace for work that requires human intelligence”, MTurk allows “requesters” to post Human Intelligence Tasks (HITs), which serve as self-contained jobs in which “workers” can participate. Via MTurk, researchers seeking participants often post survey studies for workers to voluntarily complete (@goodman2013data). Workers are given a short description about a project, including details about various tasks, estimated time investment, and payment, and may selectively choose which projects to complete. Here, researchers seeking participants often post survey studies for workers to voluntarily complete (@goodman2013data).
+MTurk offers practical advantages that may not be available via other more traditional methods of data collection, such as sampling from specific organizations . The platform allows for easier subject pool access at an affordable cost and for subject prescreening [@masonConductingBehavioralResearch2012]. Additionally, it allows for subject anonymity, subject identifiability in longitudinal studies, and offers a simple and supportive infrastructure [@paolacciRunningExperimentsAmazon2010]. More importantly, its diversity is a key strength that sets it apart from other commonly studied populations (e.g., university students, community samples), making it an attractive subject pool for researchers to draw upon [@buhrmesterAmazonMechanicalTurk2011; @erikssonWhatAmericansKnow2012; @paolacciRunningExperimentsAmazon2010]. For instance, @behrendViabilityCrowdsourcingSurvey2011 found that MTurk workers are more diverse on variables such as age, ethnicity, education, employment status, job experience, profession, nationality, and personality. The diversity of MTurk allows OB researchers to overcome concerns regarding the generalizability of their findings [@paolacciRunningExperimentsAmazon2010], which has been a key concern facing OB research [@henrichWeirdestPeopleWorld2010].
   
-##Why is MTurk Valuable for Researchers Studying Working Populations?
-  MTurk offers practical advantages that may not be available via other more traditional methods of data collection, such as sampling from specific organizations (@paolacci2010running). The platform allows for easier subject pool access at an affordable cost and for subject prescreening (@mason2012conducting). Additionally, it allows for subject anonymity, subject identifiability in longitudinal studies, and offers a simple and supportive infrastructure (@paolacci2010running). More importantly, its diversity is a key strength that sets it apart from other commonly studied populations (e.g., university students, community samples), making it an attractive subject pool for researchers to draw upon (@buhrmester2011amazon; Erikson & Simpson, 2010; @paolacci2010running). For instance, @behrend2011viability found that MTurk workers are more diverse on variables such as age, ethnicity, education, employment status, job experience, profession, nationality, and personality. The diversity of MTurk allows OB researchers to overcome concerns regarding the generalizability of their findings (e.g., @paolacci2010running), which has been a key concern facing OB research (@chiao2010weirdest).
+However, while researchers have praised MTurk for its diversity, few organizational behavior researchers have considered how MTurk might be less diverse than expected in a key respect: occupational diversity. To our knowledge, no study has compared the occupational diversity of MTurk to the broader US population. While @behrendViabilityCrowdsourcingSurvey2011 work suggests that MTurk’s occupational diversity is greater than the university population, our work expands on their research by comparing MTurk’s occupational diversity to the broader US population. If the occupational diversity of the broader US population is indeed reflected in MTurk, findings from MTurk should better generalize across occupations. Alternatively, if MTurk’s occupational diversity over- or under-represent certain occupations, generalizability of findings from MTurk should be more limited.
   
-  However, while researchers have praised MTurk for its diversity, few organizational behavior researchers have considered how MTurk might be less diverse than expected in a key respect: occupational diversity. To our knowledge, no study has compared the occupational diversity of MTurk to the broader US population. While @behrend2011viability work suggests that MTurk’s occupational diversity is greater than the university population, our work expands on their research by comparing MTurk’s occupational diversity to the broader US population. If the occupational diversity of the broader US population is indeed reflected in MTurk, findings from MTurk should better generalize across occupations. Alternatively, if MTurk’s occupational diversity over- or under-represent certain occupations, generalizability of findings from MTurk should be more limited.
-  
-  *Research Question: Is the occupational diversity of the MTurk population representative of the broader US economy?*
+*Research Question 1: Is the occupational diversity of the MTurk population representative of the broader US labor force?*
+
+In addition to examining occupational diversity, we conducted exploratory analyses of other demographic disparities, focusing in on age, gender, ethnicity, and education as these are commonly studied in the social sciences. Therefore, a second research question was examined, but in an exploratory fashion. Answering this question required that we describe the diversity of the US labor force. Fortunately, the BLS provides summary statistics which describe the proportion of individuals falling into various demographic categories. 
+
+*Research Question 2: Is the demographic diversity of the MTurk population representative of the broader US labor force?*
   
 # Methods
-##US Population Occupational Summary Statistics
-  Occupational Employment Statistics (OES) were obtained from the United States Bureau of Labor Statistics (BLS) (2015). Occupation diversity was measured by calculating the percentage of job holders falling under a particular occupational category. We adopted the Intermediate Aggregation and Standard Occupational Classification (SOC) used by the Bureau of Labor Statistics (BLS) for this study (see table 1). Percentages describe the percentage of workers in the US economy who work in occupations that fall under this broader occupational category. 
-  
-#- - - - - - - - - - - - - 
-#insert table 1 about here
-#- - - - - - - - - - - - - 
 
-```{r Load Data, include=FALSE, results='asis'}
-#Load packages
-library(readr)
-library(readxl)
-library(data.table)
-library(openxlsx)
+## US Population Occupational Summary Statistics (2015 and 2017)
 
-#Load datasets. Note: these datasets were not taken direclty from their respective sources (i.e., BLS or Qualtrics survey, respectively). The BLS dataset is a table describing the broader occupational categories, number of employees working in jobs that fall under one of these categories, and the relative frequency of jobs falling under said occupational category. The LATech dataset comes from a separate investigaiton using MTurk whereby individuals who were flagged for inattentive responding were removed from the dataset. The UGA dataset is a full dataset in the sense that it contains all individuals whose data are relevant for our investigation (i.e., participants hold a job that falls under a SOC classification) or not (i.e., they either do not work or work in a job falling outside the SOC classification system). 
-#Build the BLS Table, but first establish a temp file. 
+Occupational Employment Statistics were obtained from the United States Bureau of Labor Statistics (BLS) both from years 2015 and 2017. These data are released annually in the spring and describe the previous year. Statistics from these reports allowed us to define expectations regarding the proportion of workers falling into a particular intermediate occupational category. We adopted the Intermediate Aggregation and Standard Occupational Classification (SOC) used by the Bureau of Labor Statistics (BLS) for this study to ease our analysis. 
 
+```{r Load and Clean Data, include=FALSE, warning = FALSE, message = FALSE, echo = FALSE}
+# Load datasets. Note: these datasets were not taken direclty from their respective sources (i.e., BLS or Qualtrics survey, respectively). The BLS dataset is a table describing the broader occupational categories, number of employees working in jobs that fall under one of these categories, and the relative frequency of jobs falling under said occupational category. The LATech dataset comes from a separate investigaiton using MTurk whereby individuals who were flagged for inattentive responding were removed from the dataset. The UGA dataset is a full dataset in the sense that it contains all individuals whose data are relevant for our investigation (i.e., participants hold a job that falls under a SOC classification) or not (i.e., they either do not work or work in a job falling outside the SOC classification system). 
+
+# Build the BLS Table, but first establish a temp file. Unhastag to use.
 # Download the file with download.file()
-# Here is the URL.
-download.file("https://www.bls.gov/oes/special.requests/oesm15nat.zip", "BLS2015.zip")
-unzip("BLS2015.zip")
-library(readxl)
+# Here is the URL: 
+# download.file("https://www.bls.gov/oes/special.requests/oesm15nat.zip", "BLS2015.zip")
+# unzip("BLS2015.zip")
 BLS <- read_excel("oesm15nat/national_M2015_dl.xlsx")
 BLS <- BLS[c(2,4)]
 
 # Include data on the size of the military (taken from the department of defense (http://us-military-branches.insidegov.com))
 BLS <- rbind(BLS, c("Military Specific Occupations", 1350236))
 
-#Only keep intermediate category totals.
+# Only keep intermediate category totals.
 BLS <- BLS[c(2,71,129,162,222,293,320,336,432,494,586,612,653,687,705,767,810,923,950,1054,1130,1298,1395,1),]
 
-###Rename rows and aggregate.
-BLS[1, 1] = "11-13 Management, Business, and Financial Occupations"
-BLS[2, 1] = "11-13 Management, Business, and Financial Occupations"
-BLS[3, 1] = "15-19 Computer, Engineering, and Science Occupations"
-BLS[4, 1] = "15-19 Computer, Engineering, and Science Occupations"
-BLS[5, 1] = "15-19 Computer, Engineering, and Science Occupations"
-BLS[6, 1] = "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
-BLS[7, 1] = "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
-BLS[8, 1] = "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
-BLS[9, 1] = "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
-BLS[10, 1] = "29 Healthcare Practitioners and Technical Occupations"
-BLS[11, 1] = "31-39 Service Occupations"
-BLS[12, 1] = "31-39 Service Occupations"
-BLS[13, 1] = "31-39 Service Occupations"
-BLS[14, 1] = "31-39 Service Occupations"
-BLS[15, 1] = "31-39 Service Occupations"
-BLS[16, 1] = "41 Sales and Related Occupations"
-BLS[17, 1] = "43 Office and Administrative Support Occupations"
-BLS[18, 1] = "45 Farming, Fishing, and Forestry Occupations"
-BLS[19, 1] = "47 Construction and Extraction Occupation"
-BLS[20, 1] = "49 Installation, Maintenance, and Repair Occupations"
-BLS[21, 1] = "51 Production Occupation"
-BLS[22, 1] = "53 Transportation and Material Moving Occupation"
-BLS[23, 1] = "55 Military Specific Occupations"
+# Rename rows and aggregate.
+BLS[1, 1] = "11-13 Management, Business, and Financial"
+BLS[2, 1] = "11-13 Management, Business, and Financial"
+BLS[3, 1] = "15-19 Computer, Engineering, and Science"
+BLS[4, 1] = "15-19 Computer, Engineering, and Science"
+BLS[5, 1] = "15-19 Computer, Engineering, and Science"
+BLS[6, 1] = "21-27 Education, Legal, Community Service, Arts, and Media"
+BLS[7, 1] = "21-27 Education, Legal, Community Service, Arts, and Media"
+BLS[8, 1] = "21-27 Education, Legal, Community Service, Arts, and Media"
+BLS[9, 1] = "21-27 Education, Legal, Community Service, Arts, and Media"
+BLS[10, 1] = "29 Healthcare Practitioners and Technical"
+BLS[11, 1] = "31-39 Service"
+BLS[12, 1] = "31-39 Service"
+BLS[13, 1] = "31-39 Service"
+BLS[14, 1] = "31-39 Service"
+BLS[15, 1] = "31-39 Service"
+BLS[16, 1] = "41 Sales and Related"
+BLS[17, 1] = "43 Office and Administrative Support"
+BLS[18, 1] = "45 Farming, Fishing, and Forestry"
+BLS[19, 1] = "47 Construction and Extraction"
+BLS[20, 1] = "49 Installation, Maintenance, and Repair"
+BLS[21, 1] = "51 Production"
+BLS[22, 1] = "53 Transportation and Material Moving"
+BLS[23, 1] = "55 Military Specific"
 names(BLS) <- c("Var1","Var2")
 BLS$Var2 <- as.numeric(BLS$Var2)
 BLS <- aggregate(.~Var1,BLS,sum)
 
-#Add military occupation number to the overall. 
+# Add military occupation number to the overall. 
 BLS$Var2[14] <- BLS$Var2[13] + BLS$Var2[14]
 
-#Rename variables
+# Rename variables
 names(BLS) <- c("Intermediate Aggregation Title", "Freq")
 
-#Only keep occupational categories (no all).
+# Only keep occupational categories (no all).
 BLS <- BLS[-14,]
 
-#Compute relative frequencies. Call the object "tab".
+# Compute relative frequencies. Call the object "tab".
 tab <- transform(BLS, relative = prop.table(Freq))
 
-#Define new BLS. "e" is for "relative frequency". 
+# Define new BLS. "e" is for "relative frequency". 
 BLS <- tab[c(1,3)]
 names(BLS) <- c("Intermediate Aggregation Title","e")
 
-##LATech data
+# LATech data
 LATech <- read_csv("Data/Chris's Data from 2015.csv")
-###Delete unneeded data.
+
+# Delete unneeded data.
 LATech <- LATech[c(1:3)]
-###Edit data. Some participants provided incorrect codes or no codes.
+
+# Edit data. Some participants provided incorrect codes or no codes.
 LATech[703, 3] = "43-6011.00"
 LATech[704, 3] = "43-6011.00"
 LATech[705, 3] = "43-6011.00"
@@ -181,7 +197,7 @@ LATech[785, 3] = "35-2014.00"
 LATech[786, 3] = "29-1123.00"
 LATech[784, 3] = "25-0000.00"
 
-###Remove unemployed cases.
+# Remove unemployed cases.
 completeFun <- function(data, desiredCols) {
   completeVec <- complete.cases(data[, desiredCols])
   return(data[completeVec, ])
@@ -189,49 +205,50 @@ completeFun <- function(data, desiredCols) {
 
 LATech <- completeFun(LATech, "O*NET Job Code")
 
-###Abbreviate data, consolidate into intermediate categories, and bind.
+# Abbreviate data, consolidate into intermediate categories, and bind.
 LO <- LATech[c(3)]
 LO <- read.fwf(textConnection(LO$`O*NET Job Code`), 2)
 names(LO) <- c("Int.Agg.Cat")
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 11] <- "11-13 Management, Business, and Financial Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 13] <- "11-13 Management, Business, and Financial Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 15] <- "15-19 Computer, Engineering, and Science Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 17] <- "15-19 Computer, Engineering, and Science Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 19] <- "15-19 Computer, Engineering, and Science Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 21] <- "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 23] <- "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 25] <- "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 27] <- "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 29] <- "29 Healthcare Practitioners and Technical Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 31] <- "31-39 Service Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 33] <- "31-39 Service Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 35] <- "31-39 Service Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 37] <- "31-39 Service Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 39] <- "31-39 Service Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 41] <- "41 Sales and Related Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 43] <- "43 Office and Administrative Support Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 45] <- "45 Farming, Fishing, and Forestry Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 47] <- "47 Construction and Extraction Occupation"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 49] <- "49 Installation, Maintenance, and Repair Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 51] <- "51 Production Occupation"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 53] <- "53 Transportation and Material Moving Occupation"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 55] <- "55 Military Specific Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 11] <- "11-13 Management, Business, and Financial"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 13] <- "11-13 Management, Business, and Financial"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 15] <- "15-19 Computer, Engineering, and Science"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 17] <- "15-19 Computer, Engineering, and Science"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 19] <- "15-19 Computer, Engineering, and Science"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 21] <- "21-27 Education, Legal, Community Service, Arts, and Media"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 23] <- "21-27 Education, Legal, Community Service, Arts, and Media"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 25] <- "21-27 Education, Legal, Community Service, Arts, and Media"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 27] <- "21-27 Education, Legal, Community Service, Arts, and Media"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 29] <- "29 Healthcare Practitioners and Technical"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 31] <- "31-39 Service"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 33] <- "31-39 Service"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 35] <- "31-39 Service"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 37] <- "31-39 Service"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 39] <- "31-39 Service"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 41] <- "41 Sales and Related"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 43] <- "43 Office and Administrative Support"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 45] <- "45 Farming, Fishing, and Forestry"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 47] <- "47 Construction and Extraction"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 49] <- "49 Installation, Maintenance, and Repair"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 51] <- "51 Production"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 53] <- "53 Transportation and Material Moving"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 55] <- "55 Military Specific"
 LATech <- cbind(LATech,LO)
 
-###Build relative frequency table.
+# Build relative frequency table.
 tab <- as.data.frame(table(LATech$Int.Agg.Cat, exclude=NULL))
 tab <- transform(tab, relative = prop.table(Freq))
 names(tab) <- c("Intermediate Aggregation Title","n","f")
 
-#Table for poster.
+# Table for poster.
 table <- merge(BLS,tab, by="Intermediate Aggregation Title", all=TRUE)
 
-##UGA data
+# UGA data
 UGA <- read_excel("Data/Rachel's Data from 2015.xlsx")
 UGA <- UGA[c(2,21)]
-###Edit data. Some individuals could be classified under O*NET, but weren't in this previous investigation. Keep in mind that only the first two numbers really matter, so if there are errors (and they be random) then they should wash out at the high level of the hierarchy. 
-####Manually recode self-reported job titles.
-#Recode self-reports into SOC codes
+# Edit data. Some individuals could be classified under O*NET, but weren't in this previous investigation. Keep in mind that only the first two numbers really matter, so if there are errors (and they be random) then they should wash out at the high level of the hierarchy. 
+
+# Manually recode self-reported job titles.
+# Recode self-reports into SOC codes
 UGA$ONETCode[UGA$JobTitle=="campus supervisor"] <- "11-9033.00"
 UGA$ONETCode[UGA$JobTitle=="ETl Hardlines"] <- "37-2012.00"
 UGA$ONETCode[UGA$JobTitle=="Calculations assistant"] <- "43-3031.00"
@@ -287,7 +304,7 @@ UGA$ONETCode[UGA$JobTitle=="Self Employed"] <- "99"
 UGA$ONETCode[UGA$JobTitle=="Self-employed"] <- "99"
 UGA$ONETCode[UGA$JobTitle=="Self-Employed"] <- "99"
 UGA$ONETCode[UGA$JobTitle=="Self employed"] <- "99"
-UGA$ONETCode[UGA$JobTitle=="self employed"] <- "99" ###Check this one..
+UGA$ONETCode[UGA$JobTitle=="self employed"] <- "99" 
 UGA$ONETCode[UGA$JobTitle=="I'm currently self employed"] <- "99"
 UGA$ONETCode[UGA$JobTitle=="self-employed"] <- "99"
 UGA$ONETCode[UGA$JobTitle=="Casual Relief"] <- "99"
@@ -360,282 +377,244 @@ UGA <- completeFun(UGA, "ONETCode")
 LO <- UGA[c(1)]
 LO <- read.fwf(textConnection(LO$ONETCode), 2)
 names(LO) <- c("Int.Agg.Cat")
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 11] <- "11-13 Management, Business, and Financial Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 13] <- "11-13 Management, Business, and Financial Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 15] <- "15-19 Computer, Engineering, and Science Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 17] <- "15-19 Computer, Engineering, and Science Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 19] <- "15-19 Computer, Engineering, and Science Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 21] <- "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 23] <- "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 25] <- "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 27] <- "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 29] <- "29 Healthcare Practitioners and Technical Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 31] <- "31-39 Service Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 33] <- "31-39 Service Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 35] <- "31-39 Service Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 37] <- "31-39 Service Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 39] <- "31-39 Service Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 41] <- "41 Sales and Related Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 43] <- "43 Office and Administrative Support Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 45] <- "45 Farming, Fishing, and Forestry Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 47] <- "47 Construction and Extraction Occupation"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 49] <- "49 Installation, Maintenance, and Repair Occupations"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 51] <- "51 Production Occupation"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 53] <- "53 Transportation and Material Moving Occupation"
-LO$Int.Agg.Cat[LO$Int.Agg.Cat == 55] <- "55 Military Specific Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 11] <- "11-13 Management, Business, and Financial"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 13] <- "11-13 Management, Business, and Financial"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 15] <- "15-19 Computer, Engineering, and Science"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 17] <- "15-19 Computer, Engineering, and Science"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 19] <- "15-19 Computer, Engineering, and Science"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 21] <- "21-27 Education, Legal, Community Service, Arts, and Media"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 23] <- "21-27 Education, Legal, Community Service, Arts, and Media"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 25] <- "21-27 Education, Legal, Community Service, Arts, and Media"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 27] <- "21-27 Education, Legal, Community Service, Arts, and Media"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 29] <- "29 Healthcare Practitioners and Technical"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 31] <- "31-39 Service"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 33] <- "31-39 Service"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 35] <- "31-39 Service"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 37] <- "31-39 Service"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 39] <- "31-39 Service"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 41] <- "41 Sales and Related"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 43] <- "43 Office and Administrative Support"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 45] <- "45 Farming, Fishing, and Forestry"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 47] <- "47 Construction and Extraction"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 49] <- "49 Installation, Maintenance, and Repair"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 51] <- "51 Production"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 53] <- "53 Transportation and Material Moving"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 55] <- "55 Military Specific"
 UGA <- cbind(UGA,LO)
 ###Build relative frequency table.
 tab2 <- as.data.frame(table(UGA$Int.Agg.Cat, exclude=NULL))
+###Omit self-employed individuals.
+tab2 <- tab2[c(-14),]
 tab2 <- transform(tab2, relative = prop.table(Freq))
 names(tab2) <- c("Intermediate Aggregation Title","n","f")
 tab2 <- merge(tab2,BLS, by="Intermediate Aggregation Title", all=TRUE) 
-
-#Chi-square function that quantifies the discrepancy between expected and observed proportions.
-chi2 <- function(x) {
-    o <- (x$n)
-    e <- (x$e)
-    n <- sum(x$n, na.rm=TRUE)
-    ((o-(e)*(n))^2)/((e)*(n))
-    }
-
-#Confidence interval formula for proportions with assymptotic intervals. Intervals are assymptotic because proportions cannot be less than 0 or greater than 1, which becomes problematic as proportions near 0 or 1. 
-require("binom")
+```
+```{r Main Analyses, include = FALSE, warning = FALSE, message = FALSE, echo = FALSE}
+# Build table for sample 1 with confidence intervals.
 CI <- binom.confint(table$n, sum(table$n), conf.level = 0.95, methods = "exact")
 CI <- CI[c(5:6)]
 table <- cbind(table,CI)
 table <- table[,c(1,2,3,5,4,6)]
-ch <- as.data.frame(chi2(table))
-ch <- na.omit(ch)
-names(table) <- c("Intermediate Aggregation Title","Exp(p)","n1","LCL1","Obs(p)1","UCL1")
 CI2 <- binom.confint(tab2$n, sum(tab2$n), conf.level = 0.95, methods = "exact")
 CI2 <- CI2[c(5:6)]
 tab2 <- cbind(tab2,CI2)
 tab2 <- tab2[,c(1,2,5,3,6,4)]
-ch2 <- as.data.frame(chi2(tab2))
-ch2 <- na.omit(ch2)
-tab2 <- tab2[c(-6)]
-names(tab2) <- c("Intermediate Aggregation Title","n2","LCL2","Obs(p)2","UCL2")
-#Sum chi-square values.
-sum(ch$`chi2(table)`, na.rm=TRUE)
-sum(ch2$`chi2(tab2)`, na.rm=TRUE)
-##Validate using chi-square function in r.
-#Function for differences in relative percentages. This is not printed in the tables, but could be used to help readers see the disparity between expected and observed proportions.
-f <- function(x) {
-    f   <- (x$f)
-    BLS <- (x$e)
-    (f-BLS)
+table <- cbind(table,tab2)
+table <- table[,c(1:6,8:11)]
+names(table) <- c("Intermediate Aggregation Title","Expected","n1","LL1","Obs1","UL1","n2","LL2","Obs2","UL2")
+table$`Expected` <- round(table$`Expected`,4)
+table$LL1 <- round(table$LL1,3)
+table$LL2 <- round(table$LL2,3)
+table$`Obs1` <- round(table$`Obs1`,3)
+table$`Obs2` <- round(table$`Obs2`,3)
+table$UL1 <- round(table$UL1,3)
+table$UL2 <- round(table$UL2,3)
+
+# Run chi-square test for sample 1
+x1 <- chisq.test(table$n1, p = round(table$`Expected`,3))
+# Results are significant. Agresti (2007) notes that standardized residuals greater than 2 are indicative of association. Positive residuals indicate over-representation, while a negative residual indicates a negative association. The error bars in the figure also capture this information. 
+x1[["stdres"]]
+# Significantly over-represented: (i) 11-13 Management, Business, and Financial (6.94), (ii) 15-19 Computer, Engineering, and Science (11.97), and (iii) 21-27 Education, Legal, Community Service, Arts, and Media (8.17).
+# Conforming with expectations: (i) 29 Healthcare Practitioners and Technical (0.58), (ii) 41 Sales and Related (-2.47), (iii) 43 Office and Administrative Support (1.15), (iv) 45 Farming, Fishing, and Forestry (-0.22), and (v) 55 Military Specific (-1.37).
+# Significantly under-represented: (i) 31-39 Service (-6.33), (ii) 47 Construction and Extraction (-3.40), (iii) 49 Installation, Maintenance, and Repair (-4.51), (iv) 51 Production (-5.47), and (v) 53 Transportion and Material Moving (-5.69).
+
+# Run chi-square test for sample 2
+x2 <- chisq.test(table$n2, p = round(table$`Expected`,3))
+# Results are significant. Run post-hoc pairwise comparisons. 
+x2[["stdres"]]
+# Significantly over-represented: (i) 11-13 Management, Business, and Financial (14.76), (ii) 15-19 Computer, Engineering, and Science (8.52), and (iii) 21-27 Education, Legal, Community Service, Arts, and Media (7.30).
+# Conforming with expectations: (i) 41 Sales and Related (-1.70), (ii) 43 Office and Administrative Support (1.17), (iii) 45 Farming, Fishing, and Forestry (0.43), and (iv) 55 Military Specific (-1.76).
+# Significantly under-represented: (i) 29 Healthcare Practitioners and Technical (-3.32), (ii) 31-39 Service (-5.57), (iii) 47 Construction and Extraction (-4.72), (iv) 49 Installation, Maintenance, and Repair (-5.98), (v) 51 Production (-5.44), and (vi) 53 Transportion and Material Moving (-7.29).
+
+# Function for rounding p-values.
+myround2 <- function(x, digits = 3){
+  if (x < 10^-digits) return(paste('<', 10^-digits))
+  paste('=', myround(x, digits))
 }
-f1 <- as.data.frame(f(table))
-
-#Print chi-square APA style.
-require(devtools)
-install_github("dgromer/apa")
-require(apa)
-##Sample 1#
-Table2 <- merge(table,tab2, by="Intermediate Aggregation Title", all=TRUE)
-observed1 <- Table2$n1
-observed1 <- observed1[c(1:13)]
-expected1 <- Table2$`Exp(p)`
-expected1 <- expected1[c(1:13)]
-c1 <- chisq_apa(chisq.test(x = observed1, p = expected1, correct = TRUE))
-
-##Sample 2
-observed2 <- Table2$n2
-observed2 <- observed2[c(1:13)]
-expected2 <- Table2$`Exp(p)`
-expected2 <- expected2[c(1:13)]
-c2 <- chisq_apa(chisq.test(x = observed2, p = expected2, correct = TRUE))
-
-#Post-hoc power analysis.
-##Convert chi-squares to correlation coefficient to allow meaningful statistic.
-library(pwr)
-###Study 1
-X21 <-sum(ch$`chi2(table)`, na.rm=TRUE)
-r1 <- sqrt((X21/sum(tab$n)))
-pwr.chisq.test(w=r1,N=(sum(tab$n)),df=12,sig.level = .01)
-###Study 2
-X22 <- sum(ch2$`chi2(tab2)`, na.rm=TRUE)
-r2 <- sqrt((X21/sum(tab2$n2)))
-pwr.chisq.test(w=r2,N=(sum(tab2$n2)),df=12,sig.level = .01)
-##Conclusion - both studies possess enough power to detect the disparities that we have observed; namely that the observed distribution of occupations in MTurk does not match the distribution of the larger economy. 
-###When interpreting the differences, point out the magnitude of the disparity between expectations and observations. 
-
 ```
 
-##MTurk Occupational Summary Statistics
-  Participants’ data were collected from two independently conducted studies (n~1~ = `r nrow(LATech)`; n~2~ = `r nrow(UGA)`). In one study (n~1~ =`r nrow(LATech)`), occupational data was self-reported by participants who were asked to described their job title. They were then brought to ONET online and asked to retrieve the  six-digit occupational classification code that most closely corresponded to their job title. In the second study (n~2~ = `r nrow(UGA)`), participants again self-reported their job title. However, the six-digit occupational classification codes were obtained by training research assistants to match the self-reported job titles to those in the ONET database. Using this data, we described the occupational diversity of each sample using relative frequencies of occupational category representation as described by Table 1. 
+## MTurk Occupational Summary Statistics (2015)
   
-##Analysis
-  A chi-square test of goodness-of-fit was used to test whether proportions from MTurk samples deviated from expected proportions as derived from the BLS. Specifically, we tested whether MTurk’s occupational diversity deviated (p < .05) from that expected if we assume the BLS population parameters generalize to the MTurk population. This tests the null hypothesis that the populations are identical in terms of occupational diversity. To facilitate interpretation of our data, we also caluculated 95% confidence intervals for our sample proportions, which allows a visual inspection of whether or not the population value is within sampling error.
+In 2015, participants’ data were collected from two independently conducted studies (n~1~ = `r nrow(LATech)`; n~2~ = `r nrow(UGA)`). In sample one (n~1~ =`r nrow(LATech)`), occupational data was self-reported by participants who were asked to described their job title. They were then brought to ONET online and asked to retrieve the  six-digit occupational classification code that most closely corresponded to their job title. In the sample two (n~2~ = `r nrow(UGA)`), participants again self-reported their job title. However, the six-digit occupational classification codes were obtained by training research assistants to match the self-reported job titles to those in the ONET database. Using this data, we described the occupational diversity of each sample using relative frequencies of occupational category representation as described by Table 1. Data were again collected in 2017 as part of a separate investigation. In this sample, participants were asked to self-report their occupational data in the manner consistent with sample 1. 
+```{r Table 1, results="asis"}
+papaja::apa_table(table, 
+                  caption = "Proportions of individuals sampled from each intermediate occupational category in 2015.",
+                  landscape = TRUE,
+                  note = "n = sample; 1 or 2 = sample 1 or 2, accordingly; LL = lower 95% confidence limit; Obs = observed proportion; UL = upper 95% confidence limit.")
+```
+## Analysis
   
-#Results
-  Results shown in our table indicate that MTurk’s occupational frequency distribution does not consistently align with the US economy for both sample 1 ($\chi^2(12) = 368.58, p < .001$) and sample 2 ($\chi^2(12) = 486.07, p < .001$). Examining the 95% confidence intervals across both samples, certain occupations were consistently over- or under-represented. More specifically individuals sampled from MTurk occupied generally more white-collar jobs (e.g., Management, Business, and Financial Occupations; Computer, Engineering, and Science Occupations) and generally fewer blue-collar jobs (e.g., Construction and Extraction Occupations;  Installation, Maintenance, and Repair Occupations; Production Occupations) than what would be expected based on BLS data. For instance, 10.13% of workers in the US economy in 2015 worked in “Management, Business, and Financial Occupations.” By contrast, approximately 17% and 23% of workers from the MTurk samples fell under this classification. These trends were generally consistent across both study 1 and 2.
+A chi-square test of goodness-of-fit was used to test whether proportions from MTurk samples deviated from expected proportions as derived from the BLS. Specifically, we tested whether MTurk’s occupational diversity deviated (p < .05) from that expected if we assume the BLS population parameters generalize to the MTurk population. Gender, ethnicity, and education were examined in the same fashion. Given that multiple groups were examined, significant tests were followed by a post-hoc test. More specifically, we examined the standardized residuals from our chi-square tests [see @agrestiIntroductionCategoricalData2007], which in this context defines occupations that were over-represented (values > +3), under-represented (values < -3), or consistent with expectations (< or = |3|). To facilitate interpretation, we also calculated 95% confidence intervals for our sample proportions and plotted these values (see Figure 1). Age differences were examined used a one-sample t-test. Overall, our approach tests several distinct yet related null hypotheses; namely that the MTurk and broader US labor force contain similar (i) proportions of individuals from defined clusters of occupational areas, (ii) gender, (iii) ethnic, (iv) education, and (v) are of comparable age. [^p]
 
-#- - - - - - - - - - - - - 
-#insert table 2 about here
-#- - - - - - - - - - - - - 
-##Chart 1
-```{r}
-#Bar Plot with error bars
-require(ggplot2)
-Values <- c(Table2[1:13, 5], Table2[1:13, 2])
-Group <- c("MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS")
-Occupations <- c(Table2[1:13, 1], Table2[1:13, 1])
+[^p]: Analyses applied to the 2015 data were conducted in 2016. However, the analyses for 2017 data, more specifically the use of a chi-square goodness of fit test, were pre-registered on the Open Science Framework. Post-hoc testing was not pre-registered nor were the analyses regarding the remaining demographic variables.
+
+# Results from 2015 
+
+Chi-square tests indicate that MTurk’s occupational diversity does not align with expectations in both sample 1 (*X*^2^(`r x1[["parameter"]]`) = `r x1$statistic`, *p* `r myround2(x1$p.value)`) and sample 2, (*X*^2^(`r x2[["parameter"]]`)= `r x2$statistic`, *p* `r myround2(x2$p.value)`). Examining the standardized residuals [see @agrestiIntroductionCategoricalData2007] in this context clarifies which occupations were over-represented (values > +2), under-represented (values < -2), or consistent with expectations (< or = |2|) (see also the error bars in Figure 1). We use these criteria to facilitate interpretation.
+
+Across both samples, over-represented occupations included (i) 11-13 Management, Business, and Financial (study 1 = `r x1[["stdres"]][1]`; study 2 = `r x2[["stdres"]][1]`), (ii) 15-19 Computer, Engineering, and Science (study 1 = `r x1[["stdres"]][2]`; study 2 = `r x2[["stdres"]][2]`), (iii) 21-27 Education, Legal, Community Service, Arts, and Media (study 1 = `r x1[["stdres"]][3]`; study 2 = `r x2[["stdres"]][3]`). Occupations that were consistently under-represented included (i) 31-39 Service (study 1 = `r x1[["stdres"]][5]`; study 2 = `r x2[["stdres"]][5]`), (ii) 47 Construction and Extraction (study 1 = `r x1[["stdres"]][9]`; study 2 = `r x2[["stdres"]][9]`), (iii) 49 Installation, Maintenance, and Repair (study 1 = `r x1[["stdres"]][10]`; study 2 = `r x2[["stdres"]][10]`), (iv) 51 Production (study 1 = `r x1[["stdres"]][11]`; study 2 = `r x2[["stdres"]][11]`), and (v) 53 Transportation and Material Moving (study 1 = `r x1[["stdres"]][12]`; study 2 = `r x2[["stdres"]][12]`). Lastly, occupations that consistently appeared in a proportion that conformed with expectations included (i) 43 Office and Administrative Support (study 1 = `r x1[["stdres"]][7]`; study 2 = `r x2[["stdres"]][7]`), (ii) 45 Farming, Fishing, and Forestry (study 1 = `r x1[["stdres"]][8]`; study 2 = `r x2[["stdres"]][8]`), and (iii) 55 Military Specific (study 1 = `r x1[["stdres"]][13]`; study 2 = `r x2[["stdres"]][13]`). Overall, these results suggests that the MTurk population contains a disproportionate share of white-collar occupations relative to blue-collar occupations.
+
+It is worth pointing out that conclusions regarding two occupational categories are inconsistent across our two samples. For occupational group 29 (Healthcare Practitioners and Technical), sample one suggests that these occupations are represented as expected (study 1 = `r x1[["stdres"]][4]`). However, this group was under-represented in sample 2 (study 2 = `r x2[["stdres"]][3]`). Given that the confidence intervals from our two samples overlap (albeit very weakly), we  tentatively conclude that this group is adequately represented. For occupational category 41 (Sales and Related), sample one suggested under-representation (study 1 = `r x1[["stdres"]][6]`) whereas sample two suggests that these occupations are represented as expected (study 2 = `r x2[["stdres"]][6]`). Again, as these confidence intervals overlap, we offer a tentative conclusion that this population is represented as expected. 
+
+```{r, echo = FALSE, warning = FALSE, fig.cap = "Comparing the occupational diversity of two MTurk samples with expecations based on the Bureau of Labor Statistics"}
+# Bar Plot with error bars
+Values <- c(table[1:13,2], table[1:13, 5], table[1:13, 9])
+Group <- c("BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2")
+Occupations <- c(table[1:13, 1])
 Occ_Nums <- sapply(strsplit(Occupations, " "), "[[", 1)
-barplot_data <- data.frame(as.character(Values), as.character(Occ_Nums),as.character(Group))
+barplot_data <- data.frame(as.character(Values), as.character(Occupations),as.character(Group))
 names(barplot_data) <- c("Frequency", "Occupations","Group")
 dodge <- position_dodge(width = .9)
 
-#Define Error Bar limits.
-upperM <- as.vector(Table2[1:13, 6])
+# Define Error Bar limits.
 upperB <- c(0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-upper <-c(upperM, upperB)
-
-lowerM <- as.vector(Table2[1:13, 6])
+upperM <- c(table[1:13, 6], table[1:13, 10])
+upper <-c(upperB, upperM)
 lowerB <- c(0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-lower <- c(lowerM, lowerB)
-
+lowerM <- c(table[1:13, 4], table[1:13,8])
+lower <- c(lowerB, lowerM)
 se <- data.frame(upper, lower)
-limits <- aes(ymax = se$upper, ymin = se$lower)
 
-require(ggplot2)
-ggplot(barplot_data, aes(Occ_Nums, Values, fill = Group)) + 
-  geom_errorbar(limits, position = dodge,
-                width = 0.10, size = 1.0) +
-  geom_col(position = dodge)  +
-  ggtitle("MTurk's Occupational Diveristy with Error Bars") +
-  labs(x = "Occupation", y = "Frequency") +
-  theme(legend.position = "top", plot.title = element_text(hjust = 0.5), 
-        text=element_text(family="serif"))+
+# Merge data
+df <- cbind(se,barplot_data)
+
+# Plot data
+ggplot(barplot_data, aes(Occupations, Values, fill = Group, ymax = upper, ymin = lower)) + 
+  geom_bar(stat="identity", position = "dodge", width = 0.7) +
+  geom_bar(stat="identity", position = "dodge", 
+                colour = "black", width = 0.7, 
+                show.legend = TRUE) +
+  scale_y_continuous(breaks = seq(0, 0.30, 0.1), 
+                limits = c(0, 0.30), 
+                expand = c(0, 0)) +
+  scale_fill_manual(name = "Groups" , 
+                 values = c('grey30', 'grey60', 'grey 80'), 
+                 labels = c("BLS 2015", "Sample 1", "Sample 2")) +
+  geom_errorbar(position=position_dodge(width=0.7), 
+                     width=0.0, size=0.5, color="black") +
+  #ggtitle("Occupational Diversity of MTurk") +
+  labs(x = element_blank(), y = "Proportions") +
+  theme(legend.position = c(.8,.8), 
+        #plot.title = element_text(hjust = 0), 
+        text=element_text(family="serif")) +
   coord_flip()
 ```
 
+# Results from 2017
 
-
-##Replication Demographic Analaysis
-##Age Analysis
-```{r}
-#Age Analysis T- Test
-#Load Dataset
-require(dplyr)
-require(readxl)
+```{r Exploratory Analysis with Demographics, echo = FALSE, include = FALSE}
+# Define Age data
 age_demo <- read_excel("age_demo.xlsx")
 
-#Define population mean. In this case it was already calculated in the dataset. 
+# Define population mean. In this case it was already calculated in the dataset. 
 pop_mean <- as.numeric(age_demo[6 , 10])
 
-#Define sample mean
+# Define sample 
 MTurk17 <- read_excel("2017 Data.xls")
-samp_mean <- as.numeric(MTurk17 %>%
-  summarise(MTurk_age = mean(What.is.your.age., na.rm = TRUE)))
 
-#Not able to get population standard deviation. Estimated using sample standard deviation.
-samp_sd <- as.numeric(MTurk17 %>%
-  summarise(sd_age = sd(What.is.your.age., na.rm = TRUE)))
+# Run one-samplet test and estimate Cohen's D.
+t <- oneSampleTTest(x = MTurk17$What.is.your.age., mu = pop_mean)
+tvalue <- t$t.statistic %>%
+  formatC(digits = 2, format = "f")
+if (t$p.value < 0.0005) {
+  pvalue <- " < 0.001"
+} else {
+  if (t$p.value < 0.005)
+      pvalue <- paste0(" = ",t$p.value %>% formatC(digits = 3, format = "f"))
+    else 
+      pvalue <- paste0(" = ",t$p.value %>% formatC(digits = 2, format = "f")) 
+  }
+df <- t$df
+d <- round((t$effect.size),2)
+# MTurk participants are significantly younger than labor force at large. Moderate effect according to Cohen's criteria.
 
-#Define sample size
-n <- as.numeric(667)
-
-#Run t test.
-t_value <- (samp_mean - pop_mean)/(samp_sd/sqrt(n))
-t_value
-
-#So MTurk is much younger than the population on average. We need to convert this to an effect size (Cohen's D). 
-```
-
-##Gender Analysis
-```{r}
-##Gender Analysis
+# Define Gender data
 BLS_data <- read_excel("employment_demo.xlsx")
 
-#Get BLS gender data (expected value)
+# Get BLS gender data (expected value)
 BLS_women <- as.numeric(BLS_data[7,3])/100
-BLS_men <- 1.000 - BLS_women
+BLS_other <- 1.000 - BLS_women
+BLS_gender <- c(BLS_women, BLS_other)
 
-BLS_gender <- c(BLS_women, BLS_men, 0.0)
-
-#Get MTurk gender data (observed value)
+# Get MTurk gender data (observed value)
+MTurk17$What.is.your.gender.[MTurk17$What.is.your.gender.=="Male"] <- "Other"
 MTurk_gender <- MTurk17 %>%
   count(What.is.your.gender.)
 
-#Define confidence intervals
-require(binom)
+# Define confidence intervals
 gCI <- binom.confint(x = MTurk_gender$n, n = sum(MTurk_gender$n), conf.level = 0.95, methods = "exact")
 gCI <- gCI[ , 4:6]
 
-#Build Gender table with gender, expected value, n, LL, observed, UL
+# Build Gender table with gender, expected value, n, LL, observed, UL
 gender_table <- cbind(MTurk_gender, gCI, BLS_gender)
 names(gender_table) <- c("gender", "n", "o", "LL_g", "UL_g", "e")
-gender_table <- gender_table[ 1, c(1, 2, 3, 4, 6, 5)]
-View(gender_table)
+gender_table <- gender_table[ , c(1, 6, 2, 4, 3, 5)]
 
-#Gender chi square test
+# Run chi-square test for gender
+x3 <- chisq.test(gender_table$n, p = round(gender_table$e,3))
 
-chi2 <- function(x) {
-  o <- (x$n)
-  e <- (x$e)
-  n <- sum(x$n, na.rm=TRUE)
-  ((o-(e)*(n))^2)/((e)*(n))
-}
+# Result is significant. So it appears that MTurk is largely dominated by females. We need to have an effect size describing this phenomena (e.g., a likelihood ratio).
 
-gender_ch2 <- as.data.frame(chi2(gender_table))
-names(gender_ch2) <- c("chi2")
-row.names(gender_ch2) <- c("female")
-gender_ch2 <- na.omit(gender_ch2)
-View(gender_ch2)
-
-#Sum chi-square values.
-sum(gender_ch2$chi2, na.rm=TRUE)
-
-#So it appears that MTurk is largely dominated by females. We need to have an effect size describing this phenomena (e.g., a likelihood ratio).
-```
-
-##Ethnicity Analysis
-```{r}
-#Ethnicity Analysis 
-#Define obs_eth
+# Get BLS ethnicity data
 BLS_cauc <- as.numeric(BLS_data[7, 4])/100
 BLS_AfAm <- as.numeric(BLS_data[7,5])/100
 BLS_Asn <- as.numeric(BLS_data[7,6])/100
 BLS_Hisp <- as.numeric(BLS_data[7,7])/100
 BLS_eth <- c(BLS_AfAm, BLS_Asn, BLS_cauc, BLS_Hisp)
 
-sum(BLS_eth)
+sum(BLS_eth) # Note: Estimates for the above race groups (White, Black or African American, and Asian) do not sum to (100) because data are not presented for all races. Persons whose ethnicity is identified as Hispanic or Latino may be of any race. We decided to omit the Hispanic category and compute an "other" category, which is the residual of the other racial categories. 
+BLS_other <- 1.000 - sum(BLS_cauc, BLS_AfAm, BLS_Asn)
+BLS_eth <- c(BLS_AfAm, BLS_Asn, BLS_cauc, BLS_other)
 
-#Get MTurk ethnicity data
+#Get MTurk ethnicity data (observed value)
+MTurk17$With.which.ethnicity.do.you.most.identify.[MTurk17$With.which.ethnicity.do.you.most.identify.=="Hispanic"] <- "Other"
+MTurk17$With.which.ethnicity.do.you.most.identify.[MTurk17$With.which.ethnicity.do.you.most.identify.=="Indian"] <- "Other"
+MTurk17$With.which.ethnicity.do.you.most.identify.[MTurk17$With.which.ethnicity.do.you.most.identify.=="Native American"] <- "Other"
+MTurk17$With.which.ethnicity.do.you.most.identify.[MTurk17$With.which.ethnicity.do.you.most.identify.=="Other:"] <- "Other"
 MTurk_eth <- MTurk17 %>%
   count(MTurk17$With.which.ethnicity.do.you.most.identify.)
-MTurk_eth <- MTurk_eth[c(1:4), ]
 
 #Define confidence intervals 
-ethCI <- binom.confint(x = MTurk_eth$n, n = sum(MTurk_eth$n), conf.level = 0/95, methods = "exact")
+ethCI <- binom.confint(x = MTurk_eth$n, n = sum(MTurk_eth$n), conf.level = 0.95, methods = "exact")
 ethCI <- ethCI[ , 4:6]
 
 #Build Ethnicity table 
 ethnicity_table <- cbind(MTurk_eth, ethCI, BLS_eth)
 names(ethnicity_table) <- c("ethnicity", "n", "o", "LL_eth", "UL_eth", "e")
-eth_table <- ethnicity_table[1:4 , c(1, 6, 2, 4, 3, 5)]
+ethnicity_table <- ethnicity_table[ , c(1, 6, 2, 4, 3, 5)]
 
-#Ethnicity chi squared test
-eth_ch2 <- as.data.frame(chi2(eth_table))
-names(eth_ch2) <- c("chi2")
-row.names(eth_ch2) <- c("African American", "Asian", "Caucasian", "Hispanic")
-eth_ch2 <- na.omit(eth_ch2)
+# Ethnicity chi squared test
+x4 <- chisq.test(ethnicity_table$n, p = round(ethnicity_table$e,3))
+# Result is significant. MTurk is under-represented by African Americans, Asians, and other ethnicities. However, it does appear to be slightly over-represented by Caucasians.
 
-#Sum chi-square values.
-sum(eth_ch2$chi2, na.rm=TRUE)
-```
-
-###Education Analysis 
-```{r}
-#Education Analysis 
-#Clean BLS Data. Get totals.  
+# Education Analysis 
+# Clean BLS Data. Get totals.  
 BLS_education_original <- read_excel("education_demo.xlsx")
 BLS_education <- as.data.frame(BLS_education_original[8:14, ])
 BLS_education <- BLS_education[1, c(-2, -3, -6)]
 names(BLS_education) <- c("category", "High school graduates, no college(1)", "Some college, no degree", "Associate degree", "Bachelor's degree only", "Advanced degree")
 
-#Combine categories as necessary. Get proportions.  
+# Combine categories as necessary. Get proportions.  
 highschool_ged <- c(as.numeric(BLS_education$`High school graduates, no college(1)`) + as.numeric(BLS_education$`Some college, no degree`))
 two_year_deg <- as.numeric(BLS_education$`Associate degree`)
 four_year_deg <- as.numeric(BLS_education$`Bachelor's degree only`)
@@ -644,15 +623,15 @@ BLS_education <- c(highschool_ged, two_year_deg, four_year_deg, advanaced_deg)
 names(BLS_education) <- c("high school/GED" , "2 year degree", "4 year degree", "advanced degree")
 BLS_total <- as.numeric(sum(BLS_education))
 
-#Function to find proportion for each iteration of the vector. 
+# Function to find proportion for each iteration of the vector. 
 e_prop <- function(x) {
   e <- x/BLS_total
 }
     
-#Use vapply and the above function to get expected proportions from BLS data
+# Use vapply and the above function to get expected proportions from BLS data
 BLS_edu <- sapply(BLS_education, e_prop)
 
-#Clean MTurk Data
+# Clean MTurk Data
 MTurk_education <- MTurk17 %>%
   count(MTurk17$What.level.of.education.have.you.completed.)
 colnames(MTurk_education) <- c("education level", "n")
@@ -661,8 +640,8 @@ MTurk_education <- rbind(MTurk_education, advanced_deg)
 MTurk_education[6,1] <- "advanced degree"
 MTurk_edu <- MTurk_education[c(-4, -5), ]
 
-#Define confidence intervals 
-eduCI <- binom.confint(x = MTurk_edu$n, n = sum(MTurk_edu$n), conf.level = 0/95, methods = "exact")
+# Define confidence intervals 
+eduCI <- binom.confint(x = MTurk_edu$n, n = sum(MTurk_edu$n), conf.level = 0.95, methods = "exact")
 eduCI <- eduCI[ , 4:6]
 
 #Build Education table 
@@ -671,40 +650,43 @@ names(education_table) <- c("education level", "n", "o", "LL_eth", "UL_eth", "e"
 education_table <- education_table[ , c(1, 6, 2, 4, 3, 5)]
 
 #Education chi squared test
-edu_ch2 <- as.data.frame(chi2(education_table))
-names(edu_ch2) <- c("chi2")
-row.names(edu_ch2) <- c("high school/GED" , "2 year degree", "4 year degree", "advanced degree")
-edu_ch2 <- na.omit(edu_ch2)
-
-#Sum chi-square values.
-sum(edu_ch2$chi2, na.rm=TRUE)
+x5 <- chisq.test(education_table$n, p = round(education_table$e,3))
+# Result is  significant. MTurk contains an unexpected proportion of education.
 ```
 
+## Exploratory Analyses of Other Demographics
 
-#Discussion
-  What started our investigation was a simple research question: is the occupational diversity of the MTurk population representative of the broader US population? Our data suggest that the answer is not consistently so: certain occupations are over-represented, some fall within expectations, and still others are under-represented. Thus, OB researchers using convenient sampling procedures that draw on the MTurk population should consider whether occupational features might play a role in their investigation, which is point that we will elaborate upon in greater detail. Simply put, our results suggest that MTurk’s (US) occupational diversity does not align with the broader US economy. 
+The average worker in 2017 was `r t[["mu"]]` years of age, which was significantly older than the average MTurk worker (M = `r round(t[["mean"]],2)`, SD = `r round(t[["sd"]],2)`, *t*(`r df`) = `r tvalue`, *p* `r pvalue`, *d* = `r d`). 
 
-#Recommendations for Researchers Using MTurk
-  Given that OB researchers will likely wish to continue using MTurk as a means of gathering diverse, convenient, and low-cost survey sample data, researchers should consider how differences in the occupational diversity observed amongst MTurk workers relative to the US population might impinge upon the generalizability of their findings (@newman2015external). Specifically, given the over-representation of workers from (1) Management, Business, and Financial, (2) Computer, Engineering, and Science, and (3) Education, Legal, Community Service, Arts, and Media occupations, we might safely assume that many of our findings from MTurk will generalize across jobs classified under these broader over-represented occupational categories. However, as many occupations were under-represented [e.g., (1) Service, (2) Construction and Extraction, (3) Installation, Maintenance, and Repair, (4) Production; and (5) Transportation and Material Moving], questions may arise as to whether findings will generalize to jobs falling under these broad classifications. 
-  To address this issue, researchers should consider capturing occupational data and modeling theoretically derived moderators. Person-environment (P-E) fit theories should help guide researchers in proposing how certain occupational groupings might influence individual-level relationships, lending to more nuanced and contextualized results (@how2009dr). Further, O*NET might be useful in this regard as it provides researchers a means for quantifying key occupational differences (e.g., level of competition requirements, social skills requirements) and thereby testing P-E fit hypotheses pertaining to occupational group differences (see @judge2015person). 
+With regard to gender, the BLS provides a summary statistic only for the proportion of the labor force that identifies with the female gender, which in 2017 was `r percent(BLS_women)`. The difference compared to our MTurk sample, `r percent(gender_table$o[1])` of which were women, was significant `r chisq_apa(x3)` and suggests that MTurk is over-represented by females (standardized residual = `r  round(x3[["stdres"]][1],2)`). 
 
-##Limitations and Future Research
-  One key limitation is that we assumed that O*NET’s classification system perfectly captured all occupations during 2015. Additionally, as both studies involved convenient sampling procedures, it remains uncertain the extent to which these samples adequately reflect the larger MTurk population. Still, the consistency of our findings should be considered by future OB/HR researchers hoping to draw on MTurk for their research with the hopes of generalizing to the larger (or a specific) working US population. Additionally, as our studies were conducted in the US, it remains unclear how other MTurk populations might reflect (however imperfectly) their respective broader economy. Future larger scale studies should also consider lower levels of BLS occupational classification to examine the extent to which narrower occupations might not be represented by MTurk. Lastly, examining diversity in other respects (age, racio-ethnic, income, education, etc.) should also be considered. Though MTurk offers a practically feasible method of attaining high quality data, future research will be needed to understand the limitations of this tool.
+With regard to ethnicity, as the BLS provides estimates for race groups that do not sum to 100% (because subgroups identified as Hispanic or Latino may also be of any race), we elected to examine only the published proportions for Caucasians, African Americans, and Asians (an "other" category was created as the residual of these three categories). BLS summary statistics suggest that the labor force was composed of approximately `r percent(BLS_cauc)` Caucasians, `r percent(BLS_AfAm)` African Americans, and `r percent(BLS_Asn)` Asians. This distribution deviated significantly from our our MTurk sample `r chisq_apa(x4)`. Post-hoc testing revealed that African Americans (`r percent(ethnicity_table$o[1])`) were significantly under-represented  (standardized residual = `r round(x4[["stdres"]][1],2)`). Additionally, the "other" category `r percent(ethnicity_table$o[4])` was over-represented by MTurk (standardized residual = `r round(x4[["stdres"]][4],2)`). This overall pattern suggests that MTurk may over-represent historically disadvantaged populations, at least in the US.
 
-  Given that our data were gathered and analyzed in 2015, it might be insightful to have our procedures replicated annually to examine how the demographics of MTurk, specifically occupational characteristics, change over time, especially as access to technology becomes even easier and more commonplace. Thus, we encourage researchers to continue examining the occupational diversity of MTurk relative to the US economy. We also encourage researchers to consider novel ways of approximating the occupational diversity of both the US economy and MTurk because the currently existing taxonomies that we have used (i.e., BLS-based) probably do not capture all occupations. Lastly, our results raise a new and interesting research question: Why might MTurk possess the occupational diversity makeup that it does (i.e., why are some occupations over-represented while others are under-represented)? Similarly, what factors (e.g., access to technology, interest in psychology) might make it easier for workers coming from certain occupations to participate in OB studies hosted on MTurk? Answering these questions might unearth more constraints that impinge on the findings of OB studies using MTurk. 
+With regard to education, after aligning the measures used by the BLS with that used in our study, we found a significant overall deviation `r chisq_apa(x5)` from expectations. Specifically, the 2-year degree (MTurk = `r percent(education_table$o[1])`; BLS = `r percent(education_table$e[1])`) was under-represented by the MTurk population (standardized residual = `r round(x5[["stdres"]][1])`). By contrast, the remaining education levels were over-represented (4-year degree: MTurk = `r percent(education_table$o[2])`; BLS = `r percent(education_table$e[2])`; high school/GED: MTurk = `r percent(education_table$o[3])`; BLS = `r percent(education_table$e[3])`; advanced degree: MTurk =  `r percent(education_table$o[4])`; BLS = `r percent(education_table$e[4])`), as indicated by standardized residuals (`r round(x5[["stdres"]][2])`, `r round(x5[["stdres"]][3])`, `r round(x5[["stdres"]][4])`). If we view the over-representation of high school/GED holders as more in-line with expectations than our cutoffs indicate, then we can see a clearer over-representation of more highly educated workers on MTurk (i.e., 4-year degree and advanced degree holders). 
 
-#Conclusion
-  We called into question the diversity of MTurk as a key strength and suggested one key area where diversity may be lacking: occupational diversity. Our results suggest that, compared to the broader US population, MTurk is not as diverse, both over- and underrepresenting certain occupations. Future research drawing on MTurk should consider how occupational differences might be theoretically relevant and incorporate these effects in analyses using MTurk sample data to help overcoming these shortcomings.
+# Discussion
+
+What started our investigation was a simple research question: is the occupational diversity of the MTurk population representative of the broader US population? While our data suggest that the answer is not consistently so, it is nevertheless striking how the diversity of MTurk nevertheless mirrors that of the broader labor force (albeit, imperfectly). Though MTurk over-represents certain white-collar occupations and under-represent blue collar occupations, the overall pattern does mirror the broader labor force. This is important because of questions concerning the work settings from which these individuals are sampled. Nevertheless, while sampling from MTurk does give researchers an useful cross-section of labor force, this cross-section is not ideal and so adjustments may be needed [e.g., respondent weighting; @simonsCommonMisBeliefs2012], particularly when drawing inferences to the larger labor force.
+
+## Recommendations for Researchers Using MTurk
+
+Given that organizational researchers will likely wish to continue using MTurk as a means of gathering diverse, convenient, and low-cost survey sample data, researchers should consider how differences in the occupational diversity observed among MTurk workers relative to the US population might impinge upon the generalizability of their findings [@newmanExternalValidityMultiorganization2015]. Specifically, given the over-representation of workers from (1) Management, Business, and Financial, (2) Computer, Engineering, and Science, and (3) Education, Legal, Community Service, Arts, and Media occupations, we might safely assume that many of our findings from MTurk will generalize across jobs classified under these broader over-represented occupational categories. However, as many occupations were under-represented [e.g., (1) Service, (2) Construction and Extraction, (3) Installation, Maintenance, and Repair, (4) Production; and (5) Transportation and Material Moving], questions may arise as to whether findings will generalize to jobs falling under these broad classifications. 
+
+To address this issue, researchers should consider capturing occupational data and modeling theoretically derived moderators. Person-environment (P-E) fit theories should help guide researchers in proposing how certain occupational groupings might influence individual-level relationships, lending to more nuanced and contextualized results [@meadeDrStrangeLOVEHow2009]. Further, O*NET might be useful in this regard as it provides researchers a means for quantifying key occupational differences (e.g., level of competition requirements, social skills requirements) and thereby testing P-E fit hypotheses pertaining to occupational group differences [see @judgePersonSituationDebate2015]. 
+
+## Limitations and Future Research
+
+One key limitation is that we assumed that O*NET’s classification system perfectly captured all occupations during 2015. Additionally, as both studies involved convenient sampling procedures, it remains uncertain the extent to which these samples adequately reflect the larger MTurk population. Still, the consistency of our findings should be considered by future OB/HR researchers hoping to draw on MTurk for their research with the hopes of generalizing to the larger (or a specific) working US population. Additionally, as our studies were conducted in the US, it remains unclear how other MTurk populations might reflect (however imperfectly) their respective broader labor force. Future larger scale studies should also consider lower levels of BLS occupational classification to examine the extent to which narrower occupations might not be represented by MTurk. Lastly, examining diversity in other respects (age, ethnic, income, education, etc.) should also be considered. Though MTurk offers a practically feasible method of attaining high quality data, future research will be needed to understand the limitations of this tool.
+
+Given that our data were gathered and analyzed in 2015 and 2017, it might be insightful to have our procedures replicated annually to examine how the demographics of MTurk, specifically occupational characteristics, change over time, especially as access to technology becomes even easier and more commonplace. Thus, we encourage researchers to continue examining the occupational diversity of MTurk relative to the US labor force. We also encourage researchers to consider novel ways of approximating the occupational diversity of both the US labor force and MTurk because the currently existing taxonomies that we have used (i.e., BLS-based) probably do not capture all occupations. Lastly, our results raise a new and interesting research question: Why might MTurk possess the occupational diversity makeup that it does (i.e., why are some occupations over-represented while others are under-represented)? Similarly, what factors (e.g., access to technology, interest in psychology) might make it easier for workers coming from certain occupations to participate in OB studies hosted on MTurk? Answering these questions might unearth more constraints that impinge on the findings of occupational studies using MTurk. 
   
 \newpage
 
 # References
-```{r}
-require(papaja)
-r_refs(file = "/Users/ccasti02/Documents/Research/Research on MTurk/MTurk's Occupational Diversity/r-references.bib")
-my_citation <- cite_r(file = "/Users/ccasti02/Documents/Research/Research on MTurk/MTurk's Occupational Diversity/r-references.bib")
 
+```{r Citations, warning = FALSE, echo = FALSE}
+r_refs(file = "r-references.bib")
 ```
+
 \setlength{\parindent}{-0.5in}
 \setlength{\leftskip}{0.5in}
-=======
