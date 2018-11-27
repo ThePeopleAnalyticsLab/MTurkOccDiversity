@@ -474,7 +474,7 @@ pwr.chisq.test(w=r2,N=(sum(tab2$n2)),df=12,sig.level = .01)
 #- - - - - - - - - - - - - 
 #insert table 2 about here
 #- - - - - - - - - - - - - 
-##Chart 1
+##Barplot 1
 ```{r}
 #Bar Plot with error bars
 require(ggplot2)
@@ -509,11 +509,484 @@ ggplot(barplot_data, aes(Occ_Nums, Values, fill = Group)) +
         text=element_text(family="serif"))+
   coord_flip()
 ```
+##2015 Demographic Analysis 
+##Study 1 Age
+```{r}
+#Chris's 2015 age analysis 
+require(dplyr)
 
+#Load BLS Data
+BLS_age_15 <- read_excel("BLS.Age.2015.xlsx")
+
+#Define population mean. In this case it was already calculated in the dataset. 
+pop_mean_15 <- as.numeric(BLS_age_15[6, 10])
+
+#Define sample mean
+samp_mean_15 <- as.numeric(MTurk15 %>%
+                        summarise(MTurk_age = mean(age, na.rm = TRUE)))
+
+#Sample standard deviation.
+samp_sd_15 <- as.numeric(MTurk15 %>%
+                        summarise(sd_age = sd(age, na.rm = TRUE)))
+
+#Define sample size
+n_15 <- nrow(MTurk15)
+
+#Run t test.
+t_value_15 <- (samp_mean_15 - pop_mean_15)/(samp_sd_15/sqrt(n_15))
+
+```
+
+
+##Study 1 Gender
+```{r}
+#Gender Analysis 2015
+library(readxl)
+BLS_2015_doc <- read_excel("bls.gender.2015.xlsx")
+
+#Get BLS gender data (expected value)
+BLS_gender_15_data <- BLS_2015_doc[87:93,c(1,8,22, 28)]
+BLS_men_15 <- as.numeric(BLS_gender_15_data[6,3])/as.numeric(BLS_gender_15_data[5,3])
+BLS_women_15 <- as.numeric(BLS_gender_15_data[7,3])/as.numeric(BLS_gender_15_data[5,3])
+BLS_gender_15 <- c(BLS_women_15,BLS_men_15)
+names(BLS_gender_15) <- c("Female", "Male")
+
+#Get MTurk gender data (observed value)
+require(dplyr)
+MTurk_gender_15 <- MTurk15 %>%
+  count(gender)
+MTurk_gender_15 <- MTurk_gender_15[2:3,]
+
+#Define confidence intervals
+require(binom)
+gCI_15 <- binom.confint(x = MTurk_gender_15$n, n = sum(MTurk_gender_15$n), conf.level = 0.95, methods = "exact")
+gCI_15 <- gCI_15[ ,4:6]
+
+#Build Gender table with gender, expected value, n, LL, observed, UL
+gender_table_15 <- cbind(MTurk_gender_15, gCI_15, BLS_gender_15)
+names(gender_table_15) <- c("gender", "n", "o", "LL_g", "UL_g", "e")
+gender_table_15 <- gender_table_15[, c(1, 3, 2, 4, 6, 5)]
+
+#Gender chi square test
+
+chi2 <- function(x) {
+  o <- (x$n)
+  e <- (x$e)
+  n <- sum(x$n, na.rm=TRUE)
+  ((o-(e)*(n))^2)/((e)*(n))
+}
+
+gender_ch2_15 <- as.data.frame(chi2(gender_table_15))
+names(gender_ch2_15) <- c("chi2")
+gender_ch2_15 <- na.omit(gender_ch2_15)
+
+#Sum chi-square values.
+sum(gender_ch2_15$chi2, na.rm=TRUE)
+```
+
+##Study 1 Ethnicity
+```{r}
+#Ethnicity Analysis 
+#Define obs_eth
+BLS_ethnicity_15_data <- BLS_2015_doc[c(94, 97, 100), (c(1, 22))]
+names(BLS_ethnicity_15_data) <- c("ethnicity", "population")
+BLS_ethnicity_15_data$population <- as.numeric(BLS_ethnicity_15_data$population)
+BLS15_eth_prop <- sapply(BLS_ethnicity_15_data$population, function(x) {x/sum(BLS_ethnicity_15_data$population)})
+names(BLS15_eth_prop) <- c(BLS_ethnicity_15_data$ethnicity)
+
+#Get MTurk ethnicity data
+MTurk_eth_15 <- count(MTurk15, ethnicity)
+  
+MTurk_eth_15 <- MTurk_eth_15[c(4, 2, 3), ]
+
+#Define confidence intervals 
+ethCI_15 <- binom.confint(x = MTurk_eth_15$n, n = sum(MTurk_eth_15$n), conf.level = 0/95, methods = "exact")
+ethCI_15 <- ethCI_15[ , 4:6]
+
+#Build Ethnicity table 
+ethnicity_table_15 <- cbind(MTurk_eth_15, ethCI_15, BLS15_eth_prop)
+names(ethnicity_table_15) <- c("ethnicity", "n", "o", "LL", "UL", "e")
+eth_table_15 <- ethnicity_table_15[ , c(1, 6, 2, 4, 3, 5)]
+
+#Ethnicity chi squared test
+eth_ch2_15 <- as.data.frame(chi2(eth_table_15))
+names(eth_ch2_15) <- c("chi2")
+row.names(eth_ch2_15) <- c(BLS_ethnicity_15_data$ethnicity)
+eth_ch2_15 <- na.omit(eth_ch2_15)
+
+#Sum chi-square values.
+sum(eth_ch2_15$chi2, na.rm=TRUE)
+```
+
+##Study 1 Education Level 
+```{r}
+#2015 Education Analysis 
+#Clean BLS Data. Data is split between men and women, so the first step is to total these values for the civilian noninstitutionalize population. 
+BLS_education_15_data <- BLS_2015_doc[587:610,c(1,13,24,37,51,61,67)]
+BLS_education_15_total <- as.numeric(BLS_education_15_data[4,2]) + as.numeric(BLS_education_15_data[20,2])
+
+
+#Combine categories as necessary.Add men and women together.
+less_than_highschoo_15 <- as.numeric(BLS_education_15_data[4,3]) + as.numeric(BLS_education_15_data[20,3])
+
+#high school/ged includes "some college, no degree"
+highschool_ged_15 <- as.numeric(BLS_education_15_data[4,4]) + as.numeric(BLS_education_15_data[20,4]) + as.numeric(BLS_education_15_data[4,5]) + as.numeric(BLS_education_15_data[20,5])
+
+two_year_deg_15 <- as.numeric(BLS_education_15_data[4,6]) + as.numeric(BLS_education_15_data[20,6])
+
+bachelors_or_higher_15 <- as.numeric(BLS_education_15_data[4,7]) + as.numeric(BLS_education_15_data[20,7])
+
+BLS_education_15 <- c(less_than_highschoo_15,highschool_ged_15, two_year_deg_15, bachelors_or_higher_15)
+names(BLS_education_15) <- c("less than high school degree", "high school/GED" , "2 year degree", "bachelor's or more")
+
+
+#Use vapply and the anonomous function to get expected proportions from BLS data
+BLS_edu_15 <- sapply(BLS_education_15, function(x){x/BLS_education_15_total})
+
+#Clean MTurk Data
+MTurk_education_15 <- MTurk15 %>%
+  count(MTurk15$`education level`)
+colnames(MTurk_education_15) <- c("education level", "n")
+advanced_deg_15 <- as.numeric(MTurk_education_15[6,2]) + as.numeric(MTurk_education_15[8,2]) + as.numeric(MTurk_education_15[3,2])
+no_highschool_dip <- as.numeric(MTurk_education_15[5,2]) + as.numeric(MTurk_education_15[7,2])
+MTurk_education_15 <- rbind(no_highschool_dip, MTurk_education_15, advanced_deg_15)
+MTurk_education_15[10,1] <- c("bachelor's or higher")
+MTurk_education_15[1,1] <- c("less than a high school diploma")
+MTurk_edu_15 <- MTurk_education_15[c(-2, -4, -6, -7, -8, -9), ]
+MTurk_edu_15 <- MTurk_edu_15[c(1, 3, 2, 4), ]
+
+#Define confidence intervals 
+eduCI_15 <- binom.confint(x = MTurk_edu_15$n, n = sum(MTurk_edu_15$n), conf.level = 0/95, methods = "exact")
+eduCI_15 <- eduCI_15[ , 4:6]
+
+#Build Education table 
+education_table_15 <- cbind(MTurk_edu_15, eduCI_15, BLS_edu_15)
+names(education_table_15) <- c("education level", "n", "o", "LL_eth", "UL_eth", "e")
+education_table_15 <- education_table_15[ , c(1, 6, 2, 4, 3, 5)]
+
+#Education chi squared test
+edu_ch2_15 <- as.data.frame(chi2(education_table_15))
+names(edu_ch2_15) <- c("chi2")
+row.names(edu_ch2_15) <- c("less than a highschool diploma","high school/GED" , "2 year degree", "bachelor's or higher")
+edu_ch2_15 <- na.omit(edu_ch2_15)
+
+#Sum chi-square values.
+sum(edu_ch2_15$chi2, na.rm=TRUE)
+```
+
+##Study 2 Age
+```{r}
+#Rachel's 2015 Demographic Analysis 
+library(readxl)
+MTurk15_R <- read_excel("Rachel's Data from 2015.xlsx")
+
+#packages to clean data for demogrphics
+library(stringr)
+install.packages(tidyr)
+library(tidyr)
+
+#Rachel's age analysis 
+#Load BLS Data
+BLS_age_15 <- read_excel("~/Desktop/BLS.Age.2015.xlsx")
+
+#Define population mean. In this case it was already calculated in the dataset. 
+pop_mean_15 <- as.numeric(BLS_age_15[6, 10])
+
+#Define sample mean
+samp_mean_15_R <- as.numeric(MTurk15_R %>% 
+                             summarise(MTurk_age = mean(Age, na.rm = TRUE)))
+
+#Sample standard deviation.
+samp_sd_15_R <- as.numeric(MTurk15_R %>% 
+                           summarise(sd_age = sd(Age, na.rm = TRUE)))
+
+#Define sample size
+n_15_R <- nrow(MTurk15_R)
+
+#Run t test.
+t_value_15_R <- (samp_mean_15_R - pop_mean_15)/(samp_sd_15_R/sqrt(n_15_R))
+```
+
+##Study 2 Gender
+```{r}
+#Rachel's gender analysis
+#clean data
+MTurk15_R$Gender <- str_replace(MTurk15_R$Gender, "1", "male")
+MTurk15_R$Gender <- str_replace(MTurk15_R$Gender, "2", "female")
+
+#get frequencies
+MTurk_gender_15_R <- MTurk15_R %>% 
+  count(Gender)
+MTurk_gender_15_R <- MTurk_gender_15_R[1:2,]
+
+#Define confidence intervals
+require(binom)
+gCI_15_R <- binom.confint(x = MTurk_gender_15_R$n, n = sum(MTurk_gender_15_R$n), conf.level = 0.95, methods = "exact")
+gCI_15_R <- gCI_15_R[ ,4:6]
+
+#Build Gender table with gender, expected value, n, LL, observed, UL
+gender_table_15_R <- cbind(MTurk_gender_15_R, gCI_15_R, BLS_gender_15)
+names(gender_table_15_R) <- c("gender", "n", "o", "LL_g", "UL_g", "e")
+gender_table_15_R <- gender_table_15_R[, c(1, 3, 2, 4, 6, 5)]
+
+#Gender chi square test
+gender_ch2_15_R <- as.data.frame(chi2(gender_table_15_R))
+names(gender_ch2_15_R) <- c("chi2")
+gender_ch2_15_R <- na.omit(gender_ch2_15_R)
+
+#Sum chi-square values.
+sum(gender_ch2_15_R$chi2, na.rm=TRUE)
+
+```
+
+##Study 2 Ethnicity
+```{r}
+#Rachel's ethnicity analysis
+MTurk15_R_white <- length(which(MTurk15_R$White == 1))
+MTurk15_R_AfnAmn <- length(which(MTurk15_R$AfnAmn == 1))
+MTurk15_R_AsnPI <- length(which(MTurk15_R$AsnPI == 1))
+
+MTurk15_R_eth <- as.data.frame(c(MTurk15_R_white, MTurk15_R_AfnAmn, MTurk15_R_AsnPI))
+MTurk15_R_eth <- cbind(BLS_ethnicity_15_data$ethnicity, MTurk15_R_eth)
+colnames(MTurk15_R_eth) <- c("ethnicity", "n")
+MTurk15_R_eth_tot <- MTurk15_R_white + MTurk15_R_AfnAmn + MTurk15_R_AsnPI
+
+
+#Get proportions for ethnicities
+MTurk15_R_eth <- MTurk15_R_eth %>% 
+  mutate(prop = sapply(MTurk15_R_eth$n, function(x) {x/MTurk15_R_eth_tot}))
+
+#Define confidence intervals 
+ethCI_15_R <- binom.confint(x = MTurk15_R_eth$n, n = sum(MTurk15_R_eth$n), conf.level = 0/95, methods = "exact")
+ethCI_15_R <- ethCI_15_R[ , 4:6]
+
+#Build Ethnicity table 
+ethnicity_table_15_R <- cbind(MTurk15_R_eth[1:2], ethCI_15_R, BLS15_eth_prop)
+names(ethnicity_table_15_R) <- c("ethnicity", "n", "o", "LL", "UL", "e")
+eth_table_15_R <- ethnicity_table_15_R[1:3, c(1, 6, 2, 4, 3, 5)]
+
+#Ethnicity chi squared test
+eth_ch2_15_R <- as.data.frame(chi2(eth_table_15_R))
+names(eth_ch2_15_R) <- c("chi2")
+row.names(eth_ch2_15_R) <- c(BLS_ethnicity_15_data$ethnicity)
+eth_ch2_15_R <- na.omit(eth_ch2_15_R)
+
+#Sum chi-square values.
+sum(eth_ch2_15_R$chi2, na.rm=TRUE)
+```
+
+##Study 2 Education Level 
+```{r}
+#Rachel's education level
+MTurk15_R$Educ <- str_replace(MTurk15_R$Educ, "1", "Less than high school")
+MTurk15_R$Educ <- str_replace(MTurk15_R$Educ, "2", "High school/GED")
+MTurk15_R$Educ <- str_replace(MTurk15_R$Educ, "3", "Some college")
+MTurk15_R$Educ <- str_replace(MTurk15_R$Educ, "4", "2 year deg")
+MTurk15_R$Educ <- str_replace(MTurk15_R$Educ, "5", "4 year deg")
+MTurk15_R$Educ <- str_replace(MTurk15_R$Educ, "6", "Master's")
+MTurk15_R$Educ <- str_replace(MTurk15_R$Educ, "7", "Doctoral")
+MTurk15_R$Educ <- str_replace(MTurk15_R$Educ, "8", "J.D.")
+MTurk15_R$Educ <- str_replace(MTurk15_R$Educ, "9", "M.D.")
+
+MTurk15_R_edu <- MTurk15_R %>%
+  count(Educ)
+
+no_highschool_dip_R <- length(which(MTurk15_R$Educ == "Less than high school"))
+highschool_ged_R <- length(which(MTurk15_R$Educ == "High school/GED", MTurk15_R$Educ == "Some college"))
+two_year_deg_R <- length(which(MTurk15_R$Educ == "2 year deg"))
+advanged_deg_15_R <- length(which(MTurk15_R$Educ == "4 year deg")) + length(which(MTurk15_R$Educ == "Master's")) + length(which(MTurk15_R$Educ == "Doctoral")) + length(which(MTurk15_R$Educ == "J.D.")) + length(which(MTurk15_R$Educ == "M.D."))
+
+MTurk15_R_edu <- as.data.frame(c(no_highschool_dip_R, highschool_ged, two_year_deg_R, advanged_deg_15_R))
+education_levels <- c("no high school", "high school dimploma/GED", "2 year degree", "Bachelors or higher")
+MTurk15_R_edu <- cbind(education_levels, MTurk15_R_edu)
+colnames(MTurk15_R_edu) <- c("education level", "n")
+
+#Define confidence intervals 
+eduCI_15_R <- binom.confint(x = MTurk15_R_edu$n, n = sum(MTurk15_R_edu$n), conf.level = 0/95, methods = "exact")
+eduCI_15_R <- eduCI_15_R[ , 4:6]
+
+#Build Education table 
+education_table_15_R <- cbind(MTurk15_R_edu, eduCI_15_R, BLS_edu_15)
+names(education_table_15_R) <- c("education level", "n", "o", "LL_eth", "UL_eth", "e")
+education_table_15_R <- education_table_15_R[ , c(1, 6, 2, 4, 3, 5)]
+
+#Education chi squared test
+edu_ch2_15_R <- as.data.frame(chi2(education_table_15_R))
+names(edu_ch2_15_R) <- c("chi2")
+row.names(edu_ch2_15_R) <- c("less than a highschool diploma","high school/GED" , "2 year degree", "bachelor's or higher")
+edu_ch2_15_R <- na.omit(edu_ch2_15_R)
+
+#Sum chi-square values.
+sum(edu_ch2_15_R$chi2, na.rm=TRUE)
+```
 
 
 ##Replication Demographic Analaysis
-##Age Analysis
+##2017 Occupational Analysis 
+```{r}
+#Load datasets. Note: these datasets were not taken direclty from their respective sources (i.e., BLS or Qualtrics survey, respectively). The BLS dataset is a table describing the broader occupational categories, number of employees working in jobs that fall under one of these categories, and the relative frequency of jobs falling under said occupational category. The LATech dataset comes from a separate investigaiton using MTurk whereby individuals who were flagged for inattentive responding were removed from the dataset. 
+#Build the BLS Table, but first establish a temp file. 
+
+##BLS Data
+library(readxl)
+BLS <- read_excel("2017 BLS Data-updated.xlsx")
+BLS <- BLS[c(8,10)]
+
+#Include data on the size of the military (taken from (https://www.bls.gov/ooh/military/military-careers.htm))
+BLS <- rbind(BLS, c("Military specific occupations", 1085286))
+
+#Only major occupation groups are included in BLS
+BLS <- 
+  BLS[c(2,71,127,159,219,290,316,332,428,490,581,607,648,682,700,760,803,916,943,1046,1122,1288,427267,1),]
+
+###Rename rows and aggregate.
+BLS[1, 1] = "11-13 Management, Business, and Financial Occupations"
+BLS[2, 1] = "11-13 Management, Business, and Financial Occupations"
+BLS[3, 1] = "15-19 Computer, Engineering, and Science Occupations"
+BLS[4, 1] = "15-19 Computer, Engineering, and Science Occupations"
+BLS[5, 1] = "15-19 Computer, Engineering, and Science Occupations"
+BLS[6, 1] = "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
+BLS[7, 1] = "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
+BLS[8, 1] = "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
+BLS[9, 1] = "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
+BLS[10, 1] = "29 Healthcare Practitioners and Technical Occupations"
+BLS[11, 1] = "31-39 Service Occupations"
+BLS[12, 1] = "31-39 Service Occupations"
+BLS[13, 1] = "31-39 Service Occupations"
+BLS[14, 1] = "31-39 Service Occupations"
+BLS[15, 1] = "31-39 Service Occupations"
+BLS[16, 1] = "41 Sales and Related Occupations"
+BLS[17, 1] = "43 Office and Administrative Support Occupations"
+BLS[18, 1] = "45 Farming, Fishing, and Forestry Occupations"
+BLS[19, 1] = "47 Construction and Extraction Occupation"
+BLS[20, 1] = "49 Installation, Maintenance, and Repair Occupations"
+BLS[21, 1] = "51 Production Occupation"
+BLS[22, 1] = "53 Transportation and Material Moving Occupation"
+BLS[23, 1] = "55 Military Specific Occupations"
+names(BLS) <- c("Var1","Var2")
+BLS$Var2 <- as.numeric(BLS$Var2)
+BLS <- aggregate(.~Var1,BLS,sum)
+
+#Add military occupation number to the overall
+BLS$Var2[14] <- BLS$Var2[13] + BLS$Var2[14]
+
+#Rename variables
+names(BLS) <- c("Intermediate Aggregation Title", "Freq")
+
+#Only keep occupational categories (no all). 
+BLS <- BLS[-14,]
+
+#Compute relative frequencies. Call the object "tab". 
+tab <- transform(BLS, relative = prop.table(Freq))
+
+#Define new BLS. "e" is for "relative frequency". 
+BLS <- tab[c(1,3)]
+names(BLS) <- c("Intermediate Aggregation Title", "e")
+
+##LATech data
+LATech <- read_excel("2017 Data.xls")
+
+###Delete unneeded data.
+LATech <- LATech[c(12, 20:21)]
+names(LATech) <- c("Self-Reported Job Title", "O*NET Occupation Title", "O*NET Job Code")
+
+###Edit data. Some participants provided incorrect codes or no codes.
+LATech[644, 3] = "41-9031.00"
+LATech[274,] = c("analyst", "analyst", "13-0000.00")
+
+###Remove unemployed cases.
+completeFun <- function(data, desiredCols) {
+  completeVec <- complete.cases(data[, desiredCols])
+  return(data[completeVec, ])
+}
+LATech <- completeFun(LATech, "O*NET Job Code")
+
+###Abbreviate data, consolidate into intermediate categories, and bind.
+LO <- LATech[c(3)]
+LO <- read.fwf(textConnection(LO$`O*NET Job Code`), 2)
+names(LO) <- c("Int.Agg.Cat")
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 11] <- "11-13 Management, Business, and Financial Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 13] <- "11-13 Management, Business, and Financial Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 15] <- "15-19 Computer, Engineering, and Science Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 17] <- "15-19 Computer, Engineering, and Science Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 19] <- "15-19 Computer, Engineering, and Science Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 21] <- "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 23] <- "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 25] <- "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 27] <- "21-27 Education, Legal, Community Service, Arts, and Media Occupation"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 29] <- "29 Healthcare Practitioners and Technical Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 31] <- "31-39 Service Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 33] <- "31-39 Service Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 35] <- "31-39 Service Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 37] <- "31-39 Service Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 39] <- "31-39 Service Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 41] <- "41 Sales and Related Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 43] <- "43 Office and Administrative Support Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 45] <- "45 Farming, Fishing, and Forestry Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 47] <- "47 Construction and Extraction Occupation"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 49] <- "49 Installation, Maintenance, and Repair Occupations"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 51] <- "51 Production Occupation"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 53] <- "53 Transportation and Material Moving Occupation"
+LO$Int.Agg.Cat[LO$Int.Agg.Cat == 55] <- "55 Military Specific Occupations"
+LATech <- cbind(LATech,LO)
+
+###Build relative frequency table.
+tab <- as.data.frame(table(LO$Int.Agg.Cat, exclude=NULL))
+tab <- transform(tab, relative = prop.table(Freq))
+names(tab) <- c("Intermediate Aggregation Title","n","f")
+tab <- merge(tab,BLS, by="Intermediate Aggregation Title", all=TRUE) 
+
+#Chi-square function that quantifies the discrepancy between expected and observed proportions.
+chi2 <- function(x) {
+  o <- (x$n)
+  e <- (x$e)
+  n <- sum(x$n, na.rm=TRUE)
+  ((o-(e)*(n))^2)/((e)*(n))
+}
+
+#Confidence interval formula for proportions with assymptotic intervals. Intervals are assymptotic because proportions cannot be less than 0 or greater than 1, which becomes problematic as proportions near 0 or 1. 
+require("binom")
+CI <- binom.confint(tab$n, sum(tab$n), conf.level = 0.95, methods = "exact")
+CI <- CI[c(5:6)]
+table <- cbind(tab,CI)
+table <- table[,c(1,4,2,5,3,6)]
+ch <- as.data.frame(chi2(table))
+ch <- na.omit(ch)
+names(table) <- c("Intermediate Aggregation Title","Exp(p)","n1","LCL1","Obs(p)1","UCL1")
+
+#Sum chi-square values.
+sum(ch$`chi2(table)`, na.rm=TRUE)
+
+##Validate using chi-square function in r.
+#Function for differences in relative percentages. This is not printed in the tables, but could be used to help readers see the disparity between expected and observed proportions.
+f <- function(x) {
+  f   <- (x$f)
+  BLS <- (x$e)
+  (f-BLS)
+}
+f1 <- as.data.frame(f(table))
+
+#Print chi-square APA style.
+require(devtools)
+install_github("dgromer/apa")
+require(apa)
+##Sample 1#
+observed1 <- table$n1
+observed1 <- observed1[c(1:13)]
+expected1 <- table$`Exp(p)`
+expected1 <- expected1[c(1:13)]
+c1 <- chisq_apa(chisq.test(x = observed1, p = expected1, correct = TRUE))
+
+#Post-hoc power analysis.
+##Convert chi-squares to correlation coefficient to allow meaningful statistic.
+library(pwr)
+###Study 1
+X21 <-sum(ch$`chi2(table)`, na.rm=TRUE)
+r1 <- sqrt((X21/sum(tab$n)))
+pwr.chisq.test(w=r1,N=(sum(tab$n)),df=12,sig.level = .01)
+```
+
+##2017 Age Analysis
 ```{r}
 #Age Analysis T- Test
 #Load Dataset
@@ -543,7 +1016,7 @@ t_value
 #So MTurk is much younger than the population on average. We need to convert this to an effect size (Cohen's D). 
 ```
 
-##Gender Analysis
+##2017 Gender Analysis
 ```{r}
 ##Gender Analysis
 BLS_data <- read_excel("employment_demo.xlsx")
@@ -590,7 +1063,7 @@ sum(gender_ch2$chi2, na.rm=TRUE)
 #So it appears that MTurk is largely dominated by females. We need to have an effect size describing this phenomena (e.g., a likelihood ratio).
 ```
 
-##Ethnicity Analysis
+##2017 Ethnicity Analysis
 ```{r}
 #Ethnicity Analysis 
 #Define obs_eth
@@ -626,7 +1099,7 @@ eth_ch2 <- na.omit(eth_ch2)
 sum(eth_ch2$chi2, na.rm=TRUE)
 ```
 
-###Education Analysis 
+##2017 Education Analysis 
 ```{r}
 #Education Analysis 
 #Clean BLS Data. Get totals.  
@@ -643,14 +1116,9 @@ advanaced_deg <- as.numeric(BLS_education$`Advanced degree`)
 BLS_education <- c(highschool_ged, two_year_deg, four_year_deg, advanaced_deg)
 names(BLS_education) <- c("high school/GED" , "2 year degree", "4 year degree", "advanced degree")
 BLS_total <- as.numeric(sum(BLS_education))
-
-#Function to find proportion for each iteration of the vector. 
-e_prop <- function(x) {
-  e <- x/BLS_total
-}
     
 #Use vapply and the above function to get expected proportions from BLS data
-BLS_edu <- sapply(BLS_education, e_prop)
+BLS_edu <- sapply(BLS_education, function(x) {x/BLS_total})
 
 #Clean MTurk Data
 MTurk_education <- MTurk17 %>%
