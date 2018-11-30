@@ -462,6 +462,7 @@ papaja::apa_table(table,
                   landscape = TRUE,
                   note = "n = sample; 1 or 2 = sample 1 or 2, accordingly; LL = lower 95% confidence limit; Obs = observed proportion; UL = upper 95% confidence limit.")
 ```
+
 ## Analysis
   
 A chi-square test of goodness-of-fit was used to test whether proportions from MTurk samples deviated from expected proportions as derived from the BLS. Specifically, we tested whether MTurk’s occupational diversity deviated (p < .05) from that expected if we assume the BLS population parameters generalize to the MTurk population. Gender, ethnicity, and education were examined in the same fashion. Given that multiple groups were examined, significant tests were followed by a post-hoc test. More specifically, we examined the standardized residuals from our chi-square tests [see @agrestiIntroductionCategoricalData2007], which in this context defines occupations that were over-represented (values > +3), under-represented (values < -3), or consistent with expectations (< or = |3|). To facilitate interpretation, we also calculated 95% confidence intervals for our sample proportions and plotted these values (see Figure 1). Age differences were examined used a one-sample t-test. Overall, our approach tests several distinct yet related null hypotheses; namely that the MTurk and broader US labor force contain similar (i) proportions of individuals from defined clusters of occupational areas, (ii) gender, (iii) ethnic, (iv) education, and (v) are of comparable age. [^p]
@@ -476,25 +477,15 @@ Across both samples, over-represented occupations included (i) 11-13 Management,
 
 It is worth pointing out that conclusions regarding two occupational categories are inconsistent across our two samples. For occupational group 29 (Healthcare Practitioners and Technical), sample one suggests that these occupations are represented as expected (study 1 = `r x1[["stdres"]][4]`). However, this group was under-represented in sample 2 (study 2 = `r x2[["stdres"]][3]`). Given that the confidence intervals from our two samples overlap (albeit very weakly), we  tentatively conclude that this group is adequately represented. For occupational category 41 (Sales and Related), sample one suggested under-representation (study 1 = `r x1[["stdres"]][6]`) whereas sample two suggests that these occupations are represented as expected (study 2 = `r x2[["stdres"]][6]`). Again, as these confidence intervals overlap, we offer a tentative conclusion that this population is represented as expected. 
 
-```{r, echo = FALSE, warning = FALSE, fig.cap = "Comparing the occupational diversity of two MTurk samples with expecations based on the Bureau of Labor Statistics"}
-# Bar Plot with error bars
+# Results
+  Results shown in our table indicate that MTurk’s occupational frequency distribution does not consistently align with the US economy for both sample 1 ($\chi^2(12) = 368.58, p < .001$) and sample 2 ($\chi^2(12) = 486.07, p < .001$). Examining the 95% confidence intervals across both samples, certain occupations were consistently over- or under-represented. More specifically individuals sampled from MTurk occupied generally more white-collar jobs (e.g., Management, Business, and Financial Occupations; Computer, Engineering, and Science Occupations) and generally fewer blue-collar jobs (e.g., Construction and Extraction Occupations;  Installation, Maintenance, and Repair Occupations; Production Occupations) than what would be expected based on BLS data. For instance, 10.13% of workers in the US economy in 2015 worked in “Management, Business, and Financial Occupations.” By contrast, approximately 17% and 23% of workers from the MTurk samples fell under this classification. These trends were generally consistent across both study 1 and 2.
+
+```{r Barplot, echo = FALSE, warning = FALSE, fig.cap = "Comparing the occupational diversity of two MTurk samples with expecations based on the Bureau of Labor Statistics"}
+#Bar Plot with error bars
+require(ggplot2)
 Values <- c(table[1:13,2], table[1:13, 5], table[1:13, 9])
 Group <- c("BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2")
 Occupations <- c(table[1:13, 1])
-=======
-#Results
-  Results shown in our table indicate that MTurk’s occupational frequency distribution does not consistently align with the US economy for both sample 1 ($\chi^2(12) = 368.58, p < .001$) and sample 2 ($\chi^2(12) = 486.07, p < .001$). Examining the 95% confidence intervals across both samples, certain occupations were consistently over- or under-represented. More specifically individuals sampled from MTurk occupied generally more white-collar jobs (e.g., Management, Business, and Financial Occupations; Computer, Engineering, and Science Occupations) and generally fewer blue-collar jobs (e.g., Construction and Extraction Occupations;  Installation, Maintenance, and Repair Occupations; Production Occupations) than what would be expected based on BLS data. For instance, 10.13% of workers in the US economy in 2015 worked in “Management, Business, and Financial Occupations.” By contrast, approximately 17% and 23% of workers from the MTurk samples fell under this classification. These trends were generally consistent across both study 1 and 2.
-
-#- - - - - - - - - - - - - 
-#insert table 2 about here
-#- - - - - - - - - - - - - 
-##Barplot 1
-```{r}
-#Bar Plot with error bars
-require(ggplot2)
-Values <- c(Table2[1:13, 5], Table2[1:13, 2])
-Group <- c("MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "MTurk", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS")
-Occupations <- c(Table2[1:13, 1], Table2[1:13, 1])
 Occ_Nums <- sapply(strsplit(Occupations, " "), "[[", 1)
 barplot_data <- data.frame(as.character(Values), as.character(Occupations),as.character(Group))
 names(barplot_data) <- c("Frequency", "Occupations","Group")
@@ -536,14 +527,14 @@ ggplot(barplot_data, aes(Occupations, Values, fill = Group, ymax = upper, ymin =
 ## 2015 Demographic Analysis 
 ## Study 1 Age
 ```{r}
-#Chris's 2015 age analysis 
-require(dplyr)
-
 #Load BLS Data
 BLS_age_15 <- read_excel("BLS.Age.2015.xlsx")
 
 #Define population mean. In this case it was already calculated in the dataset. 
 pop_mean_15 <- as.numeric(BLS_age_15[6, 10])
+
+# Get dems
+MTurk15 <- read_csv("Demographics.csv")
 
 #Define sample mean
 samp_mean_15 <- as.numeric(MTurk15 %>%
@@ -1086,7 +1077,8 @@ x3 <- chisq.test(gender_table$n, p = round(gender_table$e,3))
 # Result is significant. So it appears that MTurk is largely dominated by females. We need to have an effect size describing this phenomena (e.g., a likelihood ratio).
 
 # Get BLS ethnicity data
-=======
+```
+
 ##2017 Ethnicity Analysis
 ```{r}
 #Ethnicity Analysis 
@@ -1121,9 +1113,10 @@ ethnicity_table <- ethnicity_table[ , c(1, 6, 2, 4, 3, 5)]
 # Ethnicity chi squared test
 x4 <- chisq.test(ethnicity_table$n, p = round(ethnicity_table$e,3))
 # Result is significant. MTurk is under-represented by African Americans, Asians, and other ethnicities. However, it does appear to be slightly over-represented by Caucasians.
+```
 
 # Education Analysis 
-# Clean BLS Data. Get totals.  
+# Clean BLS Data. Get totals.
 ## 2017 Education Analysis 
 ```{r}
 #Education Analysis 
@@ -1203,12 +1196,9 @@ One key limitation is that we assumed that O*NET’s classification system perfe
 Given that our data were gathered and analyzed in 2015 and 2017, it might be insightful to have our procedures replicated annually to examine how the demographics of MTurk, specifically occupational characteristics, change over time, especially as access to technology becomes even easier and more commonplace. Thus, we encourage researchers to continue examining the occupational diversity of MTurk relative to the US labor force. We also encourage researchers to consider novel ways of approximating the occupational diversity of both the US labor force and MTurk because the currently existing taxonomies that we have used (i.e., BLS-based) probably do not capture all occupations. Lastly, our results raise a new and interesting research question: Why might MTurk possess the occupational diversity makeup that it does (i.e., why are some occupations over-represented while others are under-represented)? Similarly, what factors (e.g., access to technology, interest in psychology) might make it easier for workers coming from certain occupations to participate in OB studies hosted on MTurk? Answering these questions might unearth more constraints that impinge on the findings of occupational studies using MTurk. 
   
 \newpage
-
 # References
-
 ```{r Citations, warning = FALSE, echo = FALSE}
 r_refs(file = "r-references.bib")
 ```
-
 \setlength{\parindent}{-0.5in}
 \setlength{\leftskip}{0.5in}
