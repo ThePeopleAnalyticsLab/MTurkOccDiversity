@@ -526,14 +526,8 @@ ggplot(barplot_data, aes(Occupations, Values, fill = Group, ymax = upper, ymin =
 ## 2015 Demographic Analysis 
 ## Study 1 Age
 ```{r}
-#2015 Study 1 data
-MTurk15 <- read.csv("~/MTurkOccDiversity/Demographics.csv", stringsAsFactors = FALSE)
-names(MTurk15) <- c("country", "country text", "age", "gender", "years of current employment", "education level", "is english your primary language", "job title", "job title 2", "part time or full time", "sector", "employment status", "is MTurk primary income", "income currency", "approx annual income", "work hours per week", "ethnicity", "none")
-
-
 #Chris's 2015 age analysis 
 require(dplyr)
-require(readxl)
 
 #Load BLS Data
 BLS_age_15 <- read_excel("BLS.Age.2015.xlsx")
