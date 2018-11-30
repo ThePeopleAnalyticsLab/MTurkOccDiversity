@@ -462,7 +462,6 @@ papaja::apa_table(table,
                   landscape = TRUE,
                   note = "n = sample; 1 or 2 = sample 1 or 2, accordingly; LL = lower 95% confidence limit; Obs = observed proportion; UL = upper 95% confidence limit.")
 ```
-
 ## Analysis
   
 A chi-square test of goodness-of-fit was used to test whether proportions from MTurk samples deviated from expected proportions as derived from the BLS. Specifically, we tested whether MTurk’s occupational diversity deviated (p < .05) from that expected if we assume the BLS population parameters generalize to the MTurk population. Gender, ethnicity, and education were examined in the same fashion. Given that multiple groups were examined, significant tests were followed by a post-hoc test. More specifically, we examined the standardized residuals from our chi-square tests [see @agrestiIntroductionCategoricalData2007], which in this context defines occupations that were over-represented (values > +3), under-represented (values < -3), or consistent with expectations (< or = |3|). To facilitate interpretation, we also calculated 95% confidence intervals for our sample proportions and plotted these values (see Figure 1). Age differences were examined used a one-sample t-test. Overall, our approach tests several distinct yet related null hypotheses; namely that the MTurk and broader US labor force contain similar (i) proportions of individuals from defined clusters of occupational areas, (ii) gender, (iii) ethnic, (iv) education, and (v) are of comparable age. [^p]
@@ -527,6 +526,15 @@ ggplot(barplot_data, aes(Occupations, Values, fill = Group, ymax = upper, ymin =
 ## 2015 Demographic Analysis 
 ## Study 1 Age
 ```{r}
+#2015 Study 1 data
+MTurk15 <- read.csv("~/MTurkOccDiversity/Demographics.csv", stringsAsFactors = FALSE)
+names(MTurk15) <- c("country", "country text", "age", "gender", "years of current employment", "education level", "is english your primary language", "job title", "job title 2", "part time or full time", "sector", "employment status", "is MTurk primary income", "income currency", "approx annual income", "work hours per week", "ethnicity", "none")
+
+
+#Chris's 2015 age analysis 
+require(dplyr)
+require(readxl)
+
 #Load BLS Data
 BLS_age_15 <- read_excel("BLS.Age.2015.xlsx")
 
