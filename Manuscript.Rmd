@@ -33,7 +33,7 @@ affiliation:
     institution   : "APTMetrics"
 
 author_note: >
-  All correspondence should be sent to the lead author at chris_castille@mac.com. 
+  All correspondence should be sent to the lead author at chris_castille@mac.com. We would like to thank Bryan Bunn and Maximillian Sinn for taking the time to offer a friendly review of this manuscript.
 
 abstract: >
   We compare the occupational diversity of three conveniently gathered MTurk samples (two in 2015, one in 2017) against the broader US labor force from which they have been indirectly sampled. We focus on occupational diversity given concerns regarding the the generalizability of findings into organizational life that have been drawn from studies utilizing MTurk. Additionally, as researchers may hope to target specific populations (e.g., sales professionals) understanding the extent to which these professionals are over- or under- represented in the MTurk population would inform decisions regarding the cost-effectiveness of sampling techniques. Across our samples, we found differences suggesting that the MTurk population is generally overrepresented by white collar professionals (though this is an imperfect trend). Other demographic trends were also explored regarding age, gender, and education. Overall, the MTurk population appears to fall short of an ideal representation of the broader labor force. 
