@@ -33,7 +33,7 @@ affiliation:
     institution   : "APTMetrics"
 
 author_note: >
-  All correspondence should be sent to the lead author at chris_castille@mac.com. 
+  All correspondence should be sent to the lead author at chris_castille@mac.com. We would like to thank Bryan Bunn and Maximillian Sinn for taking the time to offer a friendly review of this manuscript.
 
 abstract: >
   We compare the occupational diversity of three conveniently gathered MTurk samples (two in 2015, one in 2017) against the broader US labor force from which they have been indirectly sampled. We focus on occupational diversity given concerns regarding the the generalizability of findings into organizational life that have been drawn from studies utilizing MTurk. Additionally, as researchers may hope to target specific populations (e.g., sales professionals) understanding the extent to which these professionals are over- or under- represented in the MTurk population would inform decisions regarding the cost-effectiveness of sampling techniques. Across our samples, we found differences suggesting that the MTurk population is generally overrepresented by white collar professionals (though this is an imperfect trend). Other demographic trends were also explored regarding age, gender, and education. Overall, the MTurk population appears to fall short of an ideal representation of the broader labor force. 
@@ -64,7 +64,6 @@ library(readr)          # Reading data
 library(readxl)         # Reading data
 library(data.table)     # Reading data
 library(openxlsx)       # Reading data
-library(fifer)          # Post hoc chi-sqaure testing
 library(binom)          # Confidence intervals for proportions
 library(apa)            # Print results in apa format
 library(pwr)            # Power analysis tools
@@ -75,6 +74,7 @@ library(tidyquant)      # Used in demographic analysis
 library(lsr)            # Useful for conducting one-sample t-tests and estiamting Cohen's D
 library(stringr)        # Package helps us analyze Rachel's data
 library(tidyr)          # Package helps us analyze Rachel's data 
+library(packrat)        # Enhance reproducibility
 ```
 # Introduction
 Amazon’s Mechanical Turk (MTurk), an online labor market created by Amazon, has recently become popular among social scientists interested in collecting inexpensive, high-quality data from a diverse population [@aguinisConductingFieldExperiments2012; @behrendViabilityCrowdsourcingSurvey2011; @bergmanWhereHaveAll2016; @paolacciTurkUnderstandingMechanical2014; @shankUsingCrowdsourcingWebsites2016]. Leveraging the strengths of this tool, MTurk has been used by social scientists to replicate well-known phenomena [e.g., reaction times, priming, task switching, see @crumpEvaluatingAmazonMechanical2013; memory, see @simonsCommonMisBeliefs2012 and by organizational behavior (OB) researchers to expand the OB literature [e.g., @yarkoniInteractionsDonorAgreeableness2015].
