@@ -64,7 +64,6 @@ library(readr)          # Reading data
 library(readxl)         # Reading data
 library(data.table)     # Reading data
 library(openxlsx)       # Reading data
-library(fifer)          # Post hoc chi-sqaure testing
 library(binom)          # Confidence intervals for proportions
 library(apa)            # Print results in apa format
 library(pwr)            # Power analysis tools
@@ -75,6 +74,7 @@ library(tidyquant)      # Used in demographic analysis
 library(lsr)            # Useful for conducting one-sample t-tests and estiamting Cohen's D
 library(stringr)        # Package helps us analyze Rachel's data
 library(tidyr)          # Package helps us analyze Rachel's data 
+library(packrat)        # Enhance reproducibility
 ```
 # Introduction
 Amazon’s Mechanical Turk (MTurk), an online labor market created by Amazon, has recently become popular among social scientists interested in collecting inexpensive, high-quality data from a diverse population [@aguinisConductingFieldExperiments2012; @behrendViabilityCrowdsourcingSurvey2011; @bergmanWhereHaveAll2016; @paolacciTurkUnderstandingMechanical2014; @shankUsingCrowdsourcingWebsites2016]. Leveraging the strengths of this tool, MTurk has been used by social scientists to replicate well-known phenomena [e.g., reaction times, priming, task switching, see @crumpEvaluatingAmazonMechanical2013; memory, see @simonsCommonMisBeliefs2012 and by organizational behavior (OB) researchers to expand the OB literature [e.g., @yarkoniInteractionsDonorAgreeableness2015].
