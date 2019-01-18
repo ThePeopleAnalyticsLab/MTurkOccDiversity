@@ -1,5 +1,5 @@
 ---
-title             : "Comparing the Occupational and Demographic Diversity of the Labor Force that is Accessible via MTurk (United States)"
+title             : "Diverse but not representative: On the occupational and demographic diversity of the labor force that is accessible via MTurk"
 shorttitle        : "MTurk's Occupational Diversity"
 
 author: 
@@ -18,7 +18,7 @@ author:
     affiliation   : "3"
   - name          : "Bodour H. Mahmoud"
     affiliation   : "4"
-  - name          : "John E. Buckner"
+  - name          : "John E. Buckner V"
     affiliation   : "5"
 
 affiliation:
@@ -37,14 +37,14 @@ author_note: >
   We have sought to make this project fully reproducible. All project materials can be found on the Open Science Framework (https://osf.io/r7mjt/), where elements of this study were pre-registered (https://osf.io/fdgew/). A previous version of this manuscript was presented at the 2017 annual conference for the Society for Industrial & Organizational Psychology, Inc., in Orlando, FL. It should also be noted that data collection for one of the 2015 samples was funded by the Graduate School Dean's Award Program at the University of Georgia. 
 
 abstract: >
-  Scholars interested in studying behavioral phenomena of relevance for organizational settings have increasingly relied upon Amazon's Mechanical Turk. MTurk offers opportunities for examining a wide range of occupational settings, greatly expanding the ability of scholars' ability to generate generalizable inferences from sample data. However, little research has compared the occupational makeup of the labor force that is accessible via MTurk to the broader labor force from which they are indirectly sampled. This is crucial to understand given the importance of the work context for organizational scholarship. Here, we compare the occupational diversity of three conveniently gathered MTurk samples (two in 2015, one in 2017) against the broader broader labor force from which they have been indirectly sampled in the United States. Across our samples, we consistently found differences suggesting that the MTurk population is generally overrepresented by certain white-collar professions (e.g., Management, Business, and Financial; Computer, Engineering, and Science; Education, Legal, Community Service, Arts, and Media) and underrepresented by blue-collar professions (e.g., Production; Transportation and Material Moving). Other demographic trends mirrored broader demographic trends identified with prior MTurk research with regard to age (younger), gender (female-biased), ethnicity (e.g., African Americans underrepresented), and education (generally overeducated). Overall, our conclusions mirror add to the published literature by indicating that the labor force that is accessible via MTurk does not reflect the broader labor force.
+  Scholars have relied upon Amazon Mechanical Turk (MTurk) to sample from the broader labor force. While doing so allows scholars to sample from a variety of occupational settings, it remains unclear whether occupational settings sampled from MTurk differ from the broader labor force. To address this problem, we compare the occupational and demographic diversity of three conveniently gathered MTurk samples (two in 2015, one in 2017) against the broader labor force from which they have been indirectly sampled in the United States. We consistently found differences suggesting that the MTurk population is overrepresented by certain white-collar professions (e.g., Management, Business, and Financial; Computer, Engineering, and Science; Education, Legal, Community Service, Arts, and Media) and underrepresented by blue-collar professions (e.g., Production; Transportation and Material Moving). Other demographic trends mirrored broader demographic trends identified with prior MTurk research with regard to age (younger), gender (female-biased), ethnicity (e.g., African Americans underrepresented), and education (generally overeducated). Overall, we contribute to the published literature by indicating that the labor force that is accessible via MTurk does not adequately represent the broader labor force.
 
 header-includes:
   - \raggedbottom
   
 keywords          : "MTurk, Occupational Diversity, Demographics"
 
-wordcount         : "3919"
+wordcount         : "3936"
 
 bibliography      : ["references.bib"]
 
@@ -87,9 +87,9 @@ Scholars who study organizational phenomena (e.g., organizational behaviorists, 
 
 As enthusiasm surrounding the use of MTurk in the organizational sciences has grown, so have scholars' concerns over its use [e.g., @cheungAmazonMechanicalTurk2017; @landersInconvenientTruthArbitrary2015; @keithSystemsPerspectiveAmazon2017; @wooAmazonMechanicalTurk2015]. One problematic area relates to an assumption underlying research into organizational phenomena that draws on MTurk; namely, that the MTurk workers themselves represent a broad cross-section of the labor force population. This assumption is key to a commonly cited benefit of using crowdsourcing tools like MTurk; that is, increased generalizability [e.g., @aguinisConductingFieldExperiments2012; @behrendViabilityCrowdsourcingSurvey2011; @highhouseNewFruitFly2015; @keithSystemsPerspectiveAmazon2017; @roulinDonThrowBaby2015]. In other words, organizational scholars may assume that MTurk can be used to indirectly and *adequately* sample from the broader working population. Unfortunately, little research has compared MTurk worker demographics to that of the broader labor force. If MTurk does not adequately reflect the broader labor force, then the generalizability of research drawing on MTurk will have its own set of constraints [@keithSystemsPerspectiveAmazon2017; @landersInconvenientTruthArbitrary2015]. 
 
-Here, we compare the working subpopulation of the U.S. MTurk workforce to the broader labor force from which they were indirectly sampled. Given the importance of context in organizational research [@johnsEssentialImpactContext2006; @judgeBrightDarkSides2007; @newmanExternalValidityMultiorganization2015], we focus specifically on the extent to which the labor force that is sampled via MTurk adequately represents the broader labor force. Our study, which fits into the broader body of literature regarding who we study and the generalizability of claims made in the social sciences [e.g., @paolacciRunningExperimentsAmazon2010; @henrichWeirdestPeopleWorld2010], thus contributes to the wealth of knowledge that exists on the demographics of the MTurk population. It also informs future research on the study of organizational phenomena via MTurk.
+Here, we compare the working subpopulation of the U.S. MTurk workforce to the broader labor force from which they were indirectly sampled. Given the importance of context in organizational research [@johnsEssentialImpactContext2006; @judgeBrightDarkSides2007; @newmanExternalValidityMultiorganization2015], we focus specifically on the extent to which the labor force that is sampled via MTurk adequately represents the broader labor force. Our study, which fits into the broader body of literature regarding who we study and the generalizability of claims made in the social sciences [e.g., @paolacciRunningExperimentsAmazon2010; @henrichWeirdestPeopleWorld2010], contributes to the wealth of knowledge that exists on the demographics of the MTurk population by clearly pointing out which occupations, if any, have been overrepresented or underrepresented. It also informs future research on the study of organizational phenomena via MTurk by calling researchers using MTurk to take the role of occupational context seriously when attempting to generalize across occuaptional settings.
 
-# Examining the Occupational and Demographic Makeup of the U.S. Labor Force that is Sampled Indirectly from Amazon's Mechanical Turk
+# Overview of the Literature
 
 Over half of the MTurk population is employed [@behrendViabilityCrowdsourcingSurvey2011; @keithSystemsPerspectiveAmazon2017; @levayDemographicPoliticalComposition2016]. If the total MTurk population contains over 100,000 people [@difallahDemographicsDynamicsMechanical2018], there is a sizable subpopulation of individuals whom we may invite to participate in our research. Even if only a few thousand individuals can be sampled from [see @stewartAverageLaboratorySamples2015], this can still be helpful for organizational scholarship (e.g., measurement refinement). It might even be useful for examining understudied phenomena or populations of workers [e.g., job search behavior, underemployment, unemployed; see @roulinDonThrowBaby2015].
 
@@ -937,7 +937,7 @@ two_year_deg_R <- MTurk15_R_edu[1,2]
 advanged_deg_15_R <- MTurk15_R_edu[2,2] + MTurk15_R_edu[8,2] + MTurk15_R_edu[3,2] + MTurk15_R_edu[5,2] + MTurk15_R_edu[7,2]
 some_college_no_degree_15_R <- MTurk15_R_edu[9,2]
 MTurk15_R_edu <- c(no_highschool_dip_R, highschool_ged_R, some_college_no_degree_15_R, two_year_deg_R, advanged_deg_15_R)
-education_levels <- c("no high school", "high school dimploma/GED", "some college", "2 year degree", "Bachelors or higher")
+education_levels <- c("no high school", "high school diploma/GED", "some college", "2 year degree", "Bachelors or higher")
 MTurk15_R_edu <- as.data.frame(cbind(education_levels, MTurk15_R_edu))
 colnames(MTurk15_R_edu) <- c("education level", "n")
 MTurk15_R_edu$n <- as.numeric(MTurk15_R_edu$n)
@@ -1178,11 +1178,11 @@ table4 <- rbind(table4.3, table4.4)
 
 # Build table
 papaja::apa_table(table4, 
-                  caption = "Demograhpic distribution (gender, ethnicity, and education) of labor force sampled indirectly from MTurk (2015).",
+                  caption = "Demographic distribution (gender, ethnicity, and education) of labor force sampled indirectly from MTurk (2015).",
                   landscape = FALSE,
                   note = "LL = lower 95% confidence limit; Obs = observed proportion; UL = upper 95% confidence limit.")
 ```
-```{r, echo = FALSE, warning = FALSE, fig.cap = "Comparing the occupational diversity of two MTurk samples (2015) with expecations based on the Bureau of Labor Statistics."}
+```{r, echo = FALSE, warning = FALSE, fig.cap = "Comparing the occupational diversity of two MTurk samples (2015) with expectations based on the Bureau of Labor Statistics."}
 # Bar Plot with error bars
 Values <- c(table[1:13,2], table[1:13, 5], table[1:13, 9])
 Group <- c("BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 1", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2", "Sample 2")
@@ -1262,11 +1262,11 @@ table2[4,] <- c("Ethnicity","", "", "", "", "")
 
 # Build table
 papaja::apa_table(table2, 
-                  caption = "Demograhpic distribution (gender and ethnicity) of labor force sampled indirectly from MTurk (2017).",
+                  caption = "Demographic distribution (gender and ethnicity) of labor force sampled indirectly from MTurk (2017).",
                   landscape = FALSE,
                   note = "LL = lower 95% confidence limit; Obs = observed proportion; UL = upper 95% confidence limit.")
 ```
-```{r, echo = FALSE, warning = FALSE, fig.cap = "Comparing the occupational diversity of one MTurk sample (2017) with expecations based on the Bureau of Labor Statistics."}
+```{r, echo = FALSE, warning = FALSE, fig.cap = "Comparing the occupational diversity of one MTurk sample (2017) with expectations based on the Bureau of Labor Statistics."}
 # Bar Plot with error bars
 Values <- c(table3[1:13,2], table3[1:13, 5])
 Group <- c("BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "BLS", "Sample 3", "Sample 3", "Sample 3", "Sample 3", "Sample 3", "Sample 3", "Sample 3", "Sample 3", "Sample 3", "Sample 3", "Sample 3", "Sample 3", "Sample 3")
@@ -1326,7 +1326,7 @@ Given recent claims that the organizational science literature holds greater rel
 
 ## Recommendations for Organizational Scholars Using MTurk for Research Purposes
 
-Despite the concerns we have raised regarding the occupational diversity of the labor force that is accessible through MTurk, it is nevertheless striking how the distribution mirrors that of the broader labor force (albeit, imperfectly). Though MTurk overrepresents certain white-collar occupations and underrepresents blue collar occupations, the overall pattern does mirror the broader labor force. While this does echo the claim made by @michelAmazonMechanicalTurk2018, namely that the labor force that is accessible via MTurk is diverse, if researchers hope to generalize across the workforce while using MTurk, then other methodological choices must be made [e.g., stratified sampling, respondent weighting; for examples, see @simonsCommonMisBeliefs2012; @levayDemographicPoliticalComposition2016]. 
+Despite the concerns we have raised regarding the occupational diversity of the labor force that is accessible through MTurk, it is nevertheless striking how the distribution mirrors that of the broader labor force (albeit, imperfectly). Though MTurk overrepresents certain white-collar occupations and underrepresents blue collar occupations, the overall pattern does mirror the broader labor force. While this does echo the claim made by @michelAmazonMechanicalTurk2018, namely that the labor force that is accessible via MTurk is diverse, if researchers hope to generalize across the labor force while using MTurk, then other methodological choices must be made [e.g., stratified sampling, respondent weighting; for examples, see @simonsCommonMisBeliefs2012; @levayDemographicPoliticalComposition2016]. 
 
 While scholars studying organizational phenomena may consider pre-screening for employment, this action could backfire. A recent observation has been made suggesting that roughly 20% of participants will lie to gain access to a study [@chandlerLieDimeWhen]. It does not appear as though we encountered this problem because we informed our participants that, while we were interested in studying members of the labor force via MTurk, we would still allow non-labor force members to participate (they were given access to generic individual difference measures). We do not have experimental evidence demonstrating that this messaging had the desired effect, however. Future researchers drawing on MTurk may wish to test this. In the interim, scholars drawing on MTurk might consider adopting our messaging strategy to sample labor force participants through MTurk.
 
